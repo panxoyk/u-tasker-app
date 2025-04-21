@@ -103,7 +103,7 @@ export function Sidebar({ onSelectItem, currentSelection }: SidebarProps) {
     >
       <Box sx={{ p: 2 }}>
         <Typography variant="h6" sx={{ fontWeight: "bold", mb: 3 }}>
-          Mi Aplicación
+          UTASKER
         </Typography>
         <List component="nav" aria-label="main mailbox folders">
           {menuItems.map((item) => {
