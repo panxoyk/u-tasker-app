@@ -1,14 +1,12 @@
-import { login, signup } from '@/app/login/actions'
+'use client'
+
+import * as React from 'react';
+import LogIn from '@/app/login/LogIn';
 
 export default function LoginPage() {
   return (
-    <form>
-      <label htmlFor="email">Email:</label>
-      <input id="email" name="email" type="email" required />
-      <label htmlFor="password">Password:</label>
-      <input id="password" name="password" type="password" required />
-      <button formAction={login}>Log in</button>
-      <button formAction={signup}>Sign up</button>
-    </form>
+    <div>
+      <LogIn />
+    </div>
   )
 }
