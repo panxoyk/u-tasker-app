@@ -1,7 +1,9 @@
 'use client'
+
 import { useCallback, useEffect, useState } from 'react'
-import { createClient } from '@/utils/supabase/client'
 import { type User } from '@supabase/supabase-js'
+
+import { createClient } from '@/utils/supabase/client'
 
 // ...
 

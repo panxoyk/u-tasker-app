@@ -1,5 +1,8 @@
 export default function Home() {
   return (
-    <div>Hola Mundo!</div>
+    <div>
+      <p>Hola Mundo!</p>
+      <a href="/account">Account</a>
+    </div>
   );
 }

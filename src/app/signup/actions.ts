@@ -4,9 +4,9 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
 import { createClient } from '@/utils/supabase/server'
-import { LogInFormData } from '@/app/login/types'
+import { SignUpFormData } from '@/app/signup/types'
 
-export async function login(formData: LogInFormData) {
+export async function signup(formData: SignUpFormData) {
   const supabase = await createClient()
 
   // type-casting here for convenience
@@ -16,7 +16,7 @@ export async function login(formData: LogInFormData) {
     password: formData.password,
   }
 
-  const { error } = await supabase.auth.signInWithPassword(data)
+  const { error } = await supabase.auth.signUp(data)
 
   if (error) {
     redirect('/error')
