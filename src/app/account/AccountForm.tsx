@@ -1,51 +1,50 @@
-'use client'
+'use client';
 
-import { useCallback, useEffect, useState } from 'react'
-import { type User } from '@supabase/supabase-js'
+import { useCallback, useEffect, useState } from 'react';
+import { type User } from '@supabase/supabase-js';
 
-import { createClient } from '@/utils/supabase/client'
+import { createClient } from '@/utils/supabase/client';
 
 // ...
 
 export default function AccountForm({ user }: { user: User | null }) {
-  const supabase = createClient()
-  const [loading, setLoading] = useState(true)
-  const [name, setName] = useState<string | null>(null)
-  const [last_name, setLastName] = useState<string | null>(null)
+  const supabase = createClient();
+  const [loading, setLoading] = useState(true);
+  const [name, setName] = useState<string | null>(null);
+  const [last_name, setLastName] = useState<string | null>(null);
 
   const getProfile = useCallback(async () => {
     try {
-      setLoading(true)
+      setLoading(true);
 
       const { data, error, status } = await supabase
         .from('profile')
         .select(`name, last_name`)
         .eq('user_id', user?.id)
-        .single()
+        .single();
 
       if (error && status !== 406) {
-        console.log(error)
-        throw error
+        console.log(error);
+        throw error;
       }
 
       if (data) {
-        setName(data.name)
-        setLastName(data.last_name)
+        setName(data.name);
+        setLastName(data.last_name);
       }
     } catch (error) {
-      alert('Error loading user data!')
+      alert('Error loading user data!');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [user, supabase])
+  }, [user, supabase]);
 
   useEffect(() => {
-    getProfile()
-  }, [user, getProfile])
+    getProfile();
+  }, [user, getProfile]);
 
   return (
     <div className="form-widget">
-
       {/* ... */}
 
       <div>
@@ -55,12 +54,12 @@ export default function AccountForm({ user }: { user: User | null }) {
 
       <div>
         <label htmlFor="name">Name</label>
-        <input id="name" type="text" value={name ?? ""} disabled />
+        <input id="name" type="text" value={name ?? ''} disabled />
       </div>
 
       <div>
         <label htmlFor="last-name">Last name</label>
-        <input id="last-name" type="text" value={last_name ?? ""} disabled />
+        <input id="last-name" type="text" value={last_name ?? ''} disabled />
       </div>
 
       <div>
@@ -71,5 +70,5 @@ export default function AccountForm({ user }: { user: User | null }) {
         </form>
       </div>
     </div>
-  )
+  );
 }

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import SvgIcon from '@mui/material/SvgIcon';
 
-export function GoogleIcon() {
+export const GoogleIcon = () => {
   return (
     <SvgIcon>
       <svg
@@ -30,4 +30,4 @@ export function GoogleIcon() {
       </svg>
     </SvgIcon>
   );
-}
+};

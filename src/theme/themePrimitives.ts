@@ -19,7 +19,7 @@ declare module '@mui/material/styles' {
     900: string;
   }
 
-  interface PaletteColor extends ColorRange {}
+  interface PaletteColor extends ColorRange { }
 
   interface Palette {
     baseShadow: string;
@@ -165,13 +165,19 @@ export const getDesignTokens = (mode: PaletteMode) => {
       background: {
         default: 'hsl(0, 0%, 99%)',
         paper: 'hsl(220, 35%, 97%)',
-        ...(mode === 'dark' && { default: gray[900], paper: 'hsl(220, 30%, 7%)' }),
+        ...(mode === 'dark' && {
+          default: gray[900],
+          paper: 'hsl(220, 30%, 7%)',
+        }),
       },
       text: {
         primary: gray[800],
         secondary: gray[600],
         warning: orange[400],
-        ...(mode === 'dark' && { primary: 'hsl(0, 0%, 100%)', secondary: gray[400] }),
+        ...(mode === 'dark' && {
+          primary: 'hsl(0, 0%, 100%)',
+          secondary: gray[400],
+        }),
       },
       action: {
         hover: alpha(gray[200], 0.2),
@@ -394,7 +400,7 @@ export const shape = {
   borderRadius: 8,
 };
 
-// @ts-ignore
+// @ts-expect-error
 const defaultShadows: Shadows = [
   'none',
   'var(--template-palette-baseShadow)',
