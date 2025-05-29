@@ -1,6 +1,6 @@
 import { Theme, alpha, Components } from '@mui/material/styles';
 
-import { gray, orange } from '@/app/theme/themePrimitives';
+import { gray, orange } from '@/theme/themePrimitives';
 
 /* eslint-disable import/prefer-default-export */
 export const feedbackCustomizations: Components<Theme> = {

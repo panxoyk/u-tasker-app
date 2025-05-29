@@ -13,12 +13,11 @@ import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 import { Controller, useForm } from 'react-hook-form';
 
-import ForgotPassword from '@/app/components/ForgotPassword';
-import AppTheme from '@/app/theme/AppTheme';
-import ColorModeSelect from '@/app/theme/ColorModeSelect';
-import { GoogleIcon } from '@/app/components/CustomIcons';
-import { login } from '@/app/login/actions';
-import { LogInFormData } from '@/app/login/types';
+import AppTheme from '@/theme/AppTheme';
+import ColorModeSelect from '@/theme/ColorModeSelect';
+import { GoogleIcon } from '@/components/CustomIcons';
+import { signup } from '@/app/auth/signup/actions';
+import { SignUpFormData } from '@/app/auth/signup/types';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -28,18 +27,18 @@ const Card = styled(MuiCard)(({ theme }) => ({
   padding: theme.spacing(4),
   gap: theme.spacing(2),
   margin: 'auto',
-  [theme.breakpoints.up('sm')]: {
-    maxWidth: '450px',
-  },
   boxShadow:
     'hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px',
+  [theme.breakpoints.up('sm')]: {
+    width: '450px',
+  },
   ...theme.applyStyles('dark', {
     boxShadow:
       'hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px',
   }),
 }));
 
-const LogInContainer = styled(Stack)(({ theme }) => ({
+const SignUpContainer = styled(Stack)(({ theme }) => ({
   height: 'calc((1 - var(--template-frame-height, 0)) * 100dvh)',
   minHeight: '100%',
   padding: theme.spacing(2),
@@ -52,77 +51,58 @@ const LogInContainer = styled(Stack)(({ theme }) => ({
     position: 'absolute',
     zIndex: -1,
     inset: 0,
-    backgroundImage:
-      'radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))',
+    backgroundImage: 'radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))',
     backgroundRepeat: 'no-repeat',
     ...theme.applyStyles('dark', {
-      backgroundImage:
-        'radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))',
+      backgroundImage: 'radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))',
     }),
   },
 }));
 
-export default function LogIn(props: { disableCustomTheme?: boolean }) {
-  const [open, setOpen] = React.useState(false);
-
+const SignUp = (props: { disableCustomTheme?: boolean }) => {
   const {
     control,
     handleSubmit,
-    formState: { errors }
-  } = useForm<LogInFormData>({
+    formState: { errors },
+  } = useForm<SignUpFormData>({
     defaultValues: {
-      email: "",
-      password: "",
+      email: '',
+      password: '',
     },
-  })
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
+  });
 
   return (
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
-      <LogInContainer direction="column" justifyContent="space-between">
-        <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
+      <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
+      <SignUpContainer direction="column" justifyContent="space-between">
         <Card variant="outlined">
           <Typography
             component="h1"
             variant="h4"
             sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
           >
-            Log in
+            Sign up
           </Typography>
           <Box
             component="form"
-            onSubmit={handleSubmit(login)}
-            noValidate
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              width: '100%',
-              gap: 2,
-            }}
+            onSubmit={handleSubmit(signup)}
+            sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
           >
             <Controller
-              name='email'
+              name="email"
               control={control}
-              render={({field}) => (
+              render={({ field }) => (
                 <FormControl>
-                  <FormLabel htmlFor="email-login">Email</FormLabel>
+                  <FormLabel htmlFor="email-signup">Email</FormLabel>
                   <TextField
                     {...field}
-                    id="email-login"
-                    type="email"
-                    placeholder="your@email.com"
                     autoComplete="email"
-                    autoFocus
                     required
+                    type="email"
                     fullWidth
+                    id="email-signup"
+                    placeholder="your@email.com"
                     variant="outlined"
                     color="primary"
                   />
@@ -130,68 +110,53 @@ export default function LogIn(props: { disableCustomTheme?: boolean }) {
               )}
             />
             <Controller
-              name='password'
+              name="password"
               control={control}
-              render={({field}) => (
+              render={({ field }) => (
                 <FormControl>
-                  <FormLabel htmlFor="password-login">Password</FormLabel>
+                  <FormLabel htmlFor="password-signup">Password</FormLabel>
                   <TextField
                     {...field}
-                    placeholder="••••••"
-                    type="password"
-                    id="password-login"
-                    autoComplete="current-password"
-                    autoFocus
+                    autoComplete="new-password"
                     required
+                    type="password"
                     fullWidth
+                    placeholder="••••••"
+                    id="password-signup"
                     variant="outlined"
                     color="primary"
                   />
                 </FormControl>
               )}
             />
-            <ForgotPassword open={open} handleClose={handleClose} />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-            >
-              Continue
+            <Button type="submit" fullWidth variant="contained">
+              Sign up
             </Button>
-            <Link
-              component="button"
-              type="button"
-              onClick={handleClickOpen}
-              variant="body2"
-              sx={{ alignSelf: 'center' }}
-            >
-              Forgot your password?
-            </Link>
           </Box>
-          <Divider>or</Divider>
+          <Divider>
+            <Typography sx={{ color: 'text.secondary' }}>or</Typography>
+          </Divider>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <Button
               fullWidth
               variant="outlined"
-              onClick={() => alert('Sign in with Google')}
+              onClick={() => alert('Sign up with Google')}
               startIcon={<GoogleIcon />}
               disabled // Activar button al implementar auth con Google
             >
-              Continue with Google
+              Sign up with Google
             </Button>
             <Typography sx={{ textAlign: 'center' }}>
-              Don&apos;t have an account?{' '}
-              <Link
-                href="/signup"
-                variant="body2"
-                sx={{ alignSelf: 'center' }}
-              >
-                Sign up
+              Already have an account?{' '}
+              <Link href="/auth/login" variant="body2" sx={{ alignSelf: 'center' }}>
+                Log in
               </Link>
             </Typography>
           </Box>
         </Card>
-      </LogInContainer>
+      </SignUpContainer>
     </AppTheme>
   );
-}
+};
+
+export default SignUp;

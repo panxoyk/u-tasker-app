@@ -2,12 +2,12 @@ import * as React from 'react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import type { ThemeOptions } from '@mui/material/styles';
 
-import { inputsCustomizations } from '@/app/theme/customizations/inputs';
-import { dataDisplayCustomizations } from '@/app/theme/customizations/dataDisplay';
-import { feedbackCustomizations } from '@/app/theme/customizations/feedback';
-import { navigationCustomizations } from '@/app/theme/customizations/navigation';
-import { surfacesCustomizations } from '@/app/theme/customizations/surfaces';
-import { colorSchemes, typography, shadows, shape } from '@/app/theme/themePrimitives';
+import { inputsCustomizations } from '@/theme/customizations/inputs';
+import { dataDisplayCustomizations } from '@/theme/customizations/dataDisplay';
+import { feedbackCustomizations } from '@/theme/customizations/feedback';
+import { navigationCustomizations } from '@/theme/customizations/navigation';
+import { surfacesCustomizations } from '@/theme/customizations/surfaces';
+import { colorSchemes, typography, shadows, shape } from '@/theme/themePrimitives';
 
 interface AppThemeProps {
   children: React.ReactNode;

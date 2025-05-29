@@ -8,7 +8,7 @@ import { selectClasses } from '@mui/material/Select';
 import { tabClasses } from '@mui/material/Tab';
 import UnfoldMoreRoundedIcon from '@mui/icons-material/UnfoldMoreRounded';
 
-import { gray, brand } from '@/app/theme/themePrimitives';
+import { gray, brand } from '@/theme/themePrimitives';
 
 /* eslint-disable import/prefer-default-export */
 export const navigationCustomizations: Components<Theme> = {
