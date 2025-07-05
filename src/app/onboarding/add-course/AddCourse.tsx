@@ -1,29 +1,30 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
+import { Controller, useForm } from 'react-hook-form';
+import Container from '@mui/material/Container';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
-import { Controller, useForm } from 'react-hook-form';
 
 import { steps } from '@/app/onboarding/data';
-import { SetupNameFormData } from '@/app/onboarding/setup-name/types';
-import { setupName } from '@/app/onboarding/setup-name/actions';
+import { AddCourseFormData } from '@/app/onboarding/add-course/types';
 import AppTheme from '@/theme/AppTheme';
 import HorizontalLinearLabelStepper from '@/components/HorizontalLinearLabelStepper';
+import { addCourse } from '@/app/onboarding/add-course/actions';
 
-const SetupName = (props: { disableCustomTheme?: boolean }) => {
+const AddCourse = (props: { disableCustomTheme?: boolean }) => {
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<SetupNameFormData>({
+  } = useForm<AddCourseFormData>({
     defaultValues: {
-      name: '',
-      last_name: '',
+      course: '',
+      code: '',
+      credits: '',
     },
   });
 
@@ -33,7 +34,7 @@ const SetupName = (props: { disableCustomTheme?: boolean }) => {
       <Container maxWidth="xs" sx={{ marginTop: 8 }}>
         <Box
           component={'form'}
-          onSubmit={handleSubmit(setupName)}
+          onSubmit={handleSubmit(addCourse)}
           sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
         >
           <Typography
@@ -41,36 +42,35 @@ const SetupName = (props: { disableCustomTheme?: boolean }) => {
             variant="h4"
             sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
           >
-            Complete your personal information
+            Add your first course
           </Typography>
           <Controller
-            name="name"
+            name="course"
             control={control}
             rules={{
-              required: 'First name is required',
+              required: 'A name is required',
               minLength: { value: 2, message: 'Minimum 2 characters' },
               maxLength: {
-                value: 50,
-                message: 'Maximum 50 characters allowed',
+                value: 100,
+                message: 'Maximum 100 characters allowed',
               },
             }}
             render={({ field }) => (
               <FormControl>
-                <FormLabel htmlFor="name-setup-name">First Name</FormLabel>
+                <FormLabel htmlFor="name-add-course">Name</FormLabel>
                 <TextField
                   {...field}
-                  id="name-setup-name"
-                  autoComplete="name"
-                  placeholder="John"
+                  id="name-add-course"
+                  placeholder="Physics"
                   autoFocus
                   fullWidth
                   variant="outlined"
                   color="primary"
-                  error={!!errors.name}
-                  helperText={errors.name?.message}
+                  error={!!errors.course}
+                  helperText={errors.course?.message}
                   slotProps={{
                     htmlInput: {
-                      maxLength: 50,
+                      maxLength: 100,
                     },
                   }}
                 />
@@ -78,32 +78,44 @@ const SetupName = (props: { disableCustomTheme?: boolean }) => {
             )}
           />
           <Controller
-            name="last_name"
+            name="code"
             control={control}
-            rules={{
-              required: 'Last name is required',
-              minLength: { value: 2, message: 'Minimum 2 characters' },
-              maxLength: {
-                value: 50,
-                message: 'Maximum 50 characters allowed',
-              },
-            }}
             render={({ field }) => (
               <FormControl>
-                <FormLabel htmlFor="last-name-setup-name">Last Name</FormLabel>
+                <FormLabel htmlFor="code-setup-name">Code</FormLabel>
                 <TextField
                   {...field}
-                  id="last-name-setup-name"
-                  autoComplete="family-name"
-                  placeholder="Snow"
+                  id="code-add-course"
+                  placeholder="PHY"
                   fullWidth
                   variant="outlined"
                   color="primary"
-                  error={!!errors.last_name}
-                  helperText={errors.last_name?.message}
                   slotProps={{
                     htmlInput: {
-                      maxLength: 50,
+                      maxLength: 20,
+                    },
+                  }}
+                />
+              </FormControl>
+            )}
+          />
+          <Controller
+            name="credits"
+            control={control}
+            render={({ field }) => (
+              <FormControl>
+                <FormLabel htmlFor="credits-setup-name">Credits</FormLabel>
+                <TextField
+                  {...field}
+                  id="credits-add-course"
+                  placeholder="5"
+                  fullWidth
+                  type="number"
+                  variant="outlined"
+                  color="primary"
+                  slotProps={{
+                    htmlInput: {
+                      maxLength: 10,
                     },
                   }}
                 />
@@ -113,11 +125,11 @@ const SetupName = (props: { disableCustomTheme?: boolean }) => {
           <Button type="submit" fullWidth variant="contained" color="primary">
             Continue
           </Button>
-          <HorizontalLinearLabelStepper steps={steps} activeStep={0} />
+          <HorizontalLinearLabelStepper steps={steps} activeStep={2} />
         </Box>
       </Container>
     </AppTheme>
   );
 };
 
-export default SetupName;
+export default AddCourse;

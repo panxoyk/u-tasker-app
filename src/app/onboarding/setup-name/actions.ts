@@ -26,5 +26,5 @@ export const setupName = async (formData: SetupNameFormData) => {
   }
 
   revalidatePath('/', 'layout');
-  redirect('/account');
+  redirect('/onboarding/create-period');
 };
