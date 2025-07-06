@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -9,21 +11,39 @@ import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import { Controller, useForm } from 'react-hook-form';
 
-import { SetupNameFormData } from '@/app/onboarding/setup-name/types';
-import { setupName } from '@/app/onboarding/setup-name/actions';
+import { redirect } from 'next/navigation';
 import AppTheme from '@/theme/AppTheme';
+import HorizontalLinearLabelStepper from '@/components/HorizontalLinearLabelStepper';
+import { UpdateFullNameFormData } from '@/types/profile';
+import { updateFullName } from '@/actions/profile';
 
-const SetupName = (props: { disableCustomTheme?: boolean }) => {
+interface SetUpnameOnBoardingProps {
+  handleNext: () => void;
+  steps: string[];
+  disableCustomTheme?: boolean;
+}
+
+const SetUpNameOnBoarding = (props: SetUpnameOnBoardingProps) => {
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<SetupNameFormData>({
+  } = useForm<UpdateFullNameFormData>({
     defaultValues: {
       name: '',
       last_name: '',
     },
   });
+
+  const onSubmit = async (formData: UpdateFullNameFormData) => {
+    const result = await updateFullName(formData);
+
+    if (result.success) {
+      props.handleNext();
+    } else {
+      redirect('/error');
+    }
+  };
 
   return (
     <AppTheme {...props}>
@@ -31,7 +51,7 @@ const SetupName = (props: { disableCustomTheme?: boolean }) => {
       <Container maxWidth="xs" sx={{ marginTop: 8 }}>
         <Box
           component={'form'}
-          onSubmit={handleSubmit(setupName)}
+          onSubmit={handleSubmit(onSubmit)}
           sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
         >
           <Typography
@@ -111,10 +131,11 @@ const SetupName = (props: { disableCustomTheme?: boolean }) => {
           <Button type="submit" fullWidth variant="contained" color="primary">
             Continue
           </Button>
+          <HorizontalLinearLabelStepper steps={props.steps} activeStep={0} />
         </Box>
       </Container>
     </AppTheme>
   );
 };
 
-export default SetupName;
+export default SetUpNameOnBoarding;
