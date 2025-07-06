@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
 import Container from '@mui/material/Container';
@@ -9,13 +11,19 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { Controller, useForm } from 'react-hook-form';
 
-import { steps } from '@/app/onboarding/data';
-import { createPeriod } from '@/app/onboarding/create-period/actions';
-import { CreatePeriodFormData } from '@/app/onboarding/create-period/types';
+import { redirect } from 'next/navigation';
+import { createPeriod } from '@/actions/period';
+import { CreatePeriodFormData } from '@/types/period';
 import AppTheme from '@/theme/AppTheme';
 import HorizontalLinearLabelStepper from '@/components/HorizontalLinearLabelStepper';
 
-const CreatePeriod = (props: { disableCustomTheme?: boolean }) => {
+interface CreatePeriodOnBoardingProps {
+  handleNext: () => void;
+  steps: string[];
+  disableCustomTheme?: boolean;
+}
+
+const CreatePeriodOnBoarding = (props: CreatePeriodOnBoardingProps) => {
   const {
     control,
     handleSubmit,
@@ -26,13 +34,23 @@ const CreatePeriod = (props: { disableCustomTheme?: boolean }) => {
     },
   });
 
+  const onSubmit = async (formData: CreatePeriodFormData) => {
+    const result = await createPeriod(formData);
+
+    if (result.success) {
+      props.handleNext();
+    } else {
+      redirect('/error');
+    }
+  };
+
   return (
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
       <Container maxWidth="xs" sx={{ marginTop: 8 }}>
         <Box
           component={'form'}
-          onSubmit={handleSubmit(createPeriod)}
+          onSubmit={handleSubmit(onSubmit)}
           sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
         >
           <Typography
@@ -77,11 +95,11 @@ const CreatePeriod = (props: { disableCustomTheme?: boolean }) => {
           <Button type="submit" fullWidth variant="contained" color="primary">
             Continue
           </Button>
-          <HorizontalLinearLabelStepper steps={steps} activeStep={1} />
+          <HorizontalLinearLabelStepper steps={props.steps} activeStep={1} />
         </Box>
       </Container>
     </AppTheme>
   );
 };
 
-export default CreatePeriod;
+export default CreatePeriodOnBoarding;
