@@ -80,8 +80,7 @@ export default function LoginPage() {
   };
 
   return (
-    <AppTheme>
-      <CssBaseline enableColorScheme />
+    <div>
       <LogInContainer direction="column" justifyContent="space-between">
         <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
         <Card variant="outlined">
@@ -188,6 +187,6 @@ export default function LoginPage() {
           </Box>
         </Card>
       </LogInContainer>
-    </AppTheme>
+    </div>
   );
 }

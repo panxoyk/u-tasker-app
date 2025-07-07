@@ -20,10 +20,9 @@ import HorizontalLinearLabelStepper from '@/components/HorizontalLinearLabelStep
 interface CreatePeriodOnBoardingProps {
   handleNext: () => void;
   steps: string[];
-  disableCustomTheme?: boolean;
 }
 
-const CreatePeriodOnBoarding = (props: CreatePeriodOnBoardingProps) => {
+export default function CreatePeriodOnBoarding(props: CreatePeriodOnBoardingProps) {
   const {
     control,
     handleSubmit,
@@ -45,8 +44,7 @@ const CreatePeriodOnBoarding = (props: CreatePeriodOnBoardingProps) => {
   };
 
   return (
-    <AppTheme {...props}>
-      <CssBaseline enableColorScheme />
+    <div>
       <Container maxWidth="xs" sx={{ marginTop: 8 }}>
         <Box
           component={'form'}
@@ -98,8 +96,6 @@ const CreatePeriodOnBoarding = (props: CreatePeriodOnBoardingProps) => {
           <HorizontalLinearLabelStepper steps={props.steps} activeStep={1} />
         </Box>
       </Container>
-    </AppTheme>
+    </div>
   );
-};
-
-export default CreatePeriodOnBoarding;
+}

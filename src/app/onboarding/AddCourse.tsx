@@ -23,7 +23,7 @@ interface AddCourseOnBoardingProps {
   disableCustomTheme?: boolean;
 }
 
-const AddCourseOnBoarding = (props: AddCourseOnBoardingProps) => {
+export default function AddCourseOnBoarding(props: AddCourseOnBoardingProps) {
   const {
     control,
     handleSubmit,
@@ -47,8 +47,7 @@ const AddCourseOnBoarding = (props: AddCourseOnBoardingProps) => {
   };
 
   return (
-    <AppTheme {...props}>
-      <CssBaseline enableColorScheme />
+    <div>
       <Container maxWidth="xs" sx={{ marginTop: 8 }}>
         <Box
           component={'form'}
@@ -146,8 +145,6 @@ const AddCourseOnBoarding = (props: AddCourseOnBoardingProps) => {
           <HorizontalLinearLabelStepper steps={props.steps} activeStep={2} />
         </Box>
       </Container>
-    </AppTheme>
+    </div>
   );
-};
-
-export default AddCourseOnBoarding;
+}
