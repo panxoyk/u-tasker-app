@@ -10,6 +10,7 @@ export type TaskData = {
   course_id: number;
   course: { name: string };
   title: string;
+  status: number;
   description?: string;
   due_date?: string;
 };

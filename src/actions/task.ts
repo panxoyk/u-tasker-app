@@ -2,6 +2,7 @@
 
 import { AddTaskFormData, TaskData } from '@/types/task';
 import { createClient } from '@/utils/supabase/server';
+import { revalidatePath } from 'next/cache';
 
 export const getTasksPendiente = async (
   course_id?: number,
@@ -11,7 +12,7 @@ export const getTasksPendiente = async (
 
     let query = supabase
       .from('task')
-      .select('id, course_id, title, description, due_date, course(name)')
+      .select('id, course_id, title, status, description, due_date, course(name)')
       .eq('status', 1);
 
     if (course_id) {
@@ -40,7 +41,7 @@ export const getTasksEnProceso = async (
 
     let query = supabase
       .from('task')
-      .select('id, course_id, title, description, due_date, course(name)')
+      .select('id, course_id, title, status, description, due_date, course(name)')
       .eq('status', 2);
 
     if (course_id) {
@@ -69,7 +70,7 @@ export const getTasksEntregada = async (
 
     let query = supabase
       .from('task')
-      .select('id, course_id, title, description, due_date, course(name)')
+      .select('id, course_id, title, status, description, due_date, course(name)')
       .eq('status', 3);
 
     if (course_id) {
@@ -97,7 +98,7 @@ export const getTasksVencida = async (
 
     let query = supabase
       .from('task')
-      .select('id, course_id, title, description, due_date, course(name)')
+      .select('id, course_id, title, status, description, due_date, course(name)')
       .eq('status', 4);
 
     if (course_id) {
@@ -118,11 +119,13 @@ export const getTasksVencida = async (
   }
 };
 
-export const addTask = async (formData: AddTaskFormData) => {
+export const addTask = async (
+  formData: AddTaskFormData,
+): Promise<{ success: boolean; data?: TaskData[]; error?: string }> => {
   try {
     const supabase = await createClient();
 
-    const { data, error } = await supabase
+    const { data: task, error } = await supabase
       .from('task')
       .insert([
         {
@@ -140,14 +143,42 @@ export const addTask = async (formData: AddTaskFormData) => {
       return { success: false, error: error.message };
     }
 
-    return { success: true, data: data };
+    return { success: true, data: task };
   } catch (e: any) {
     console.error('Unexpected error adding task:', e);
     return { success: false, error: e.message || 'An unexpected error occurred' };
   }
 };
 
-export const deleteTask = async (id: number) => {
+export const updateStatusTask = async (
+  id: number,
+  status_id: number = 1,
+): Promise<{ success: boolean; data?: TaskData[]; error?: string }> => {
+  try {
+    const supabase = await createClient();
+
+    const { data: task, error } = await supabase
+      .from('task')
+      .update({ status: status_id })
+      .eq('id', id)
+      .select();
+
+    if (error) {
+      console.error('Error updating status task:', error);
+      return { success: false, error: error.message };
+    }
+
+    revalidatePath('/tasks', 'layout');
+    return { success: true, data: task };
+  } catch (e: any) {
+    console.error('Unexpected error updating status task:', e);
+    return { success: false, error: e.message || 'An unexpected error occurred' };
+  }
+};
+
+export const deleteTask = async (
+  id: number,
+): Promise<{ success: boolean; error?: string }> => {
   try {
     const supabase = await createClient();
 
@@ -158,6 +189,7 @@ export const deleteTask = async (id: number) => {
       return { success: false, error: error.message };
     }
 
+    revalidatePath('/tasks', 'layout');
     return { success: true };
   } catch (e: any) {
     console.error('Unexpected error deleting task:', e);
