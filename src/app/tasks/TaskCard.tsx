@@ -13,8 +13,8 @@ import {
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import PlayCircleOutlineOutlinedIcon from '@mui/icons-material/PlayCircleOutlineOutlined';
 import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined';
-import { useState } from 'react';
-import { deleteTask, updateStatusTask } from '@/actions/task';
+import { useEffect, useState } from 'react';
+import { deleteTask, updateTaskStatus } from '@/actions/task';
 import { formatDate } from '@/utils/lib';
 
 interface TaskCardProps {
@@ -26,6 +26,16 @@ export default function TaskCard({ task }: TaskCardProps) {
   const [isStarting, setIsStarting] = useState(false);
   const [isCompleting, setIsCompleting] = useState(false);
 
+  const [formattedDueDate, setFormattedDueDate] = useState('');
+
+  useEffect(() => {
+    if (task.due_date) {
+      setFormattedDueDate(formatDate(task.due_date));
+    } else {
+      setFormattedDueDate('No');
+    }
+  }, [task.due_date]);
+
   const handleDelete = async () => {
     setIsDeleting(true);
     await deleteTask(task.id);
@@ -34,13 +44,13 @@ export default function TaskCard({ task }: TaskCardProps) {
 
   const handleStart = async () => {
     setIsStarting(true);
-    await updateStatusTask(task.id, 2);
+    await updateTaskStatus({ id: task.id, status: 2 });
     setIsStarting(false);
   };
 
   const handleComplete = async () => {
     setIsCompleting(true);
-    await updateStatusTask(task.id, 3);
+    await updateTaskStatus({ id: task.id, status: 3 });
     setIsCompleting(false);
   };
 
@@ -52,7 +62,7 @@ export default function TaskCard({ task }: TaskCardProps) {
           {task.title}
         </Typography>
         <Typography sx={{ color: 'text.secondary', mb: 1.5 }}>
-          Due date: {formatDate(task.due_date)}
+          Due date: {formattedDueDate}
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
           {task.description}
