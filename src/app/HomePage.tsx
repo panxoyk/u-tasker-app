@@ -299,22 +299,7 @@ export default function HomePage({
         ),
         badge: totalTasks > 0 ? totalTasks : null,
       },
-
-      {
-        id: 'add-task', // NEW: New menu item for adding tasks
-        text: 'Añadir Tarea',
-        icon: <NoteAddIcon />, // Use the new icon
-        component: (
-          <AddTaskPageContent
-            // Ensure courses is always an array, even if initialCourses is null/undefined
-            courses={initialCourses || []}
-            coursesError={coursesError}
-            onTaskAdded={handleTaskAdded}
-            showSnackbar={showSnackbar}
-          />
-        ),
-        badge: null,
-      },
+      // The 'add-task' menu item is removed from here
       {
         id: 'account',
         text: 'Cuenta',
@@ -347,15 +332,32 @@ export default function HomePage({
       handleRefreshTasks,
       user,
       loadingUser,
-      initialCourses, // Add initialCourses to dependency array
-      coursesError, // Add coursesError to dependency array
-      handleTaskAdded, // Add handleTaskAdded to dependency array
-      showSnackbar, // Add showSnackbar to dependency array
+      // initialCourses, // No longer directly used here for add-task component
+      // coursesError, // No longer directly used here for add-task component
+      // handleTaskAdded, // No longer directly used here for add-task component
+      // showSnackbar, // No longer directly used here for add-task component
     ],
+  );
+
+  // Define add-task component separately since it's not in the main menuItems
+  const addTaskComponent = useMemo(
+    () => (
+      <AddTaskPageContent
+        courses={initialCourses || []}
+        coursesError={coursesError}
+        onTaskAdded={handleTaskAdded}
+        showSnackbar={showSnackbar}
+      />
+    ),
+    [initialCourses, coursesError, handleTaskAdded, showSnackbar],
   );
 
   const appTitle = useMemo(() => {
     const currentItem = menuItems.find((item) => item.id === activeSection);
+    // If activeSection is 'add-task', manually set the title
+    if (activeSection === 'add-task') {
+      return 'Añadir Tarea';
+    }
     return currentItem ? currentItem.text : 'Bienvenido';
   }, [activeSection, menuItems]);
 
@@ -368,8 +370,12 @@ export default function HomePage({
 
   const currentContent = useMemo(() => {
     const item = menuItems.find((item) => item.id === activeSection);
+    // If activeSection is 'add-task', return the specific add task component
+    if (activeSection === 'add-task') {
+      return addTaskComponent;
+    }
     return item ? item.component : <HomePageContent />;
-  }, [activeSection, menuItems]);
+  }, [activeSection, menuItems, addTaskComponent]);
 
   const drawerWidth = 280;
 
@@ -382,7 +388,7 @@ export default function HomePage({
         }}
       >
         <Typography variant="h6" noWrap component="div" fontWeight="bold">
-          TaskManager Pro
+          U TASKER
         </Typography>
       </Toolbar>
 
@@ -521,15 +527,10 @@ export default function HomePage({
                 </Button>
               </>
             )}
-            {activeSection === 'add-task' && ( // Add a refresh button for add-task page if needed
-              <Tooltip title="Resetear formulario">
-                <IconButton
-                  color="inherit"
-                  onClick={() => {
-                    /* Implement reset logic in AddTaskForm if needed */
-                  }}
-                >
-                  <RefreshIcon />
+            {activeSection === 'add-task' && ( // Add a "go back to tasks" or "reset form" button for add-task page
+              <Tooltip title="Volver a Tareas">
+                <IconButton color="inherit" onClick={() => handleMenuItemClick('tasks')}>
+                  <AssignmentIcon />
                 </IconButton>
               </Tooltip>
             )}
