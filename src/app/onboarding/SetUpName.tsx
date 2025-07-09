@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import CssBaseline from '@mui/material/CssBaseline';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import TextField from '@mui/material/TextField';
@@ -12,7 +11,6 @@ import Button from '@mui/material/Button';
 import { Controller, useForm } from 'react-hook-form';
 
 import { redirect } from 'next/navigation';
-import AppTheme from '@/theme/AppTheme';
 import HorizontalLinearLabelStepper from '@/components/HorizontalLinearLabelStepper';
 import { UpdateFullNameFormData } from '@/types/profile';
 import { updateFullName } from '@/actions/profile';

@@ -1,14 +1,16 @@
 // actions/task.ts
 'use server';
 
-import { AddTaskFormData, TaskData } from '@/types/task';
+import { GenericAPIResponse, TaskArrayAPIResponse } from '@/types/responses';
+import { AddTaskFormData, UpdateTaskStatusFormData } from '@/types/task';
+import { convertDateTimeToTimestampz } from '@/utils/lib';
 import { createClient } from '@/utils/supabase/server';
 import { revalidatePath } from 'next/cache';
 
-export const getTasksByStatus = async ({
-  status = 1,
-  course_id,
-}: GetTasksByStatus): Promise<TaskArrayAPIResponse> => {
+export const getTasksByStatus = async (
+  status: number = 1,
+  course_id?: number,
+): Promise<TaskArrayAPIResponse> => {
   try {
     const supabase = createClient(); // Await is not needed here as createClient typically returns the client directly
 
@@ -191,7 +193,7 @@ export const updateTaskStatus = async ({
   }
 };
 
-export const deleteTask = async ({ id }: DeleteTaskFormData): Promise<GenericAPIResponse> => {
+export const deleteTask = async (id: number): Promise<GenericAPIResponse> => {
   try {
     const supabase = createClient();
 

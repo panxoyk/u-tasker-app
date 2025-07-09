@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import CssBaseline from '@mui/material/CssBaseline';
 import { Controller, useForm } from 'react-hook-form';
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
@@ -13,14 +12,12 @@ import Button from '@mui/material/Button';
 import { redirect } from 'next/navigation';
 
 import { AddCourseFormData } from '@/types/course';
-import AppTheme from '@/theme/AppTheme';
 import HorizontalLinearLabelStepper from '@/components/HorizontalLinearLabelStepper';
 import { addCourse } from '@/actions/course';
 
 interface AddCourseOnBoardingProps {
   handleNext: () => void;
   steps: string[];
-  disableCustomTheme?: boolean;
 }
 
 export default function AddCourseOnBoarding(props: AddCourseOnBoardingProps) {
