@@ -4,7 +4,7 @@ import type { ClassData } from '@/types/class';
 import { cleanTimeFormat } from '@/utils/lib';
 import { Box, Paper, Typography, Chip, Button } from '@mui/material';
 import Link from 'next/link';
-import AddOutlinedIcon from "@mui/icons-material/AddOutlined"
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 
 interface WeekStatsProps {
   classesData: {
@@ -112,7 +112,7 @@ export default function WeekStats({ classesData }: WeekStatsProps) {
         })}
       </Box>
       <Box sx={{ mt: 2 }}>
-        <Link href={"/timetable/add-class"}>
+        <Link href={'/timetable/add-class'}>
           <Button fullWidth variant="outlined" startIcon={<AddOutlinedIcon />}>
             Añadir clase
           </Button>
