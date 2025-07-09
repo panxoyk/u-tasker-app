@@ -2,11 +2,9 @@
 
 import { createClient } from '@/utils/supabase/server';
 import { CreatePeriodFormData } from '@/types/period';
-import { PeriodArrayAPIResponse } from '@/types/responses';
+import { PeriodAPIResponse } from '@/types/responses';
 
-export const createPeriod = async ({
-  period,
-}: CreatePeriodFormData): Promise<PeriodArrayAPIResponse> => {
+export const createPeriod = async (formData: CreatePeriodFormData) => {
   try {
     const supabase = await createClient();
 

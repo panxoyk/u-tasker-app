@@ -1,12 +1,17 @@
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/utils/supabase/server';
-import { AddEvaluationFormData, UpdateEvaluationDateFormData } from '../types/evaluation';
+import {
+  AddEvaluationFormData,
+  DeleteEvaluationFormData,
+  GetEvaluationsByCourse,
+  UpdateEvaluationDateFormData,
+} from '../types/evaluation';
 import { EvaluationArrayAPIResponse, GenericAPIResponse } from '@/types/responses';
 import { convertDateTimeToTimestampz } from '@/utils/lib';
 
-export const getEvaluationsByCourse = async (
-  course_id: number,
-): Promise<EvaluationArrayAPIResponse> => {
+export const getEvaluationsByCourse = async ({
+  course_id,
+}: GetEvaluationsByCourse): Promise<EvaluationArrayAPIResponse> => {
   try {
     const supabase = await createClient();
 
@@ -20,7 +25,6 @@ export const getEvaluationsByCourse = async (
       return { success: false, error: error.message };
     }
 
-    // @ts-ignore
     return { success: true, data: evaluations };
   } catch (e: any) {
     console.error(`Unexpected error getting evaluations for course ${course_id}`, e);
@@ -46,8 +50,8 @@ export const addEvaluation = async ({
         {
           title: title,
           course_id: course_id,
-          ...(startDateISO && { start_date: startDateISO }),
-          ...(endDateISO && { end_date: endDateISO }),
+          ...(startDateISO && { start_time: startDateISO }),
+          ...(endDateISO && { end_time: endDateISO }),
         },
       ])
       .select();
@@ -79,8 +83,8 @@ export const updateEvaluationDate = async ({
     const { data: evaluation, error } = await supabase
       .from('evaluation')
       .update({
-        ...(startDateISO && { start_date: startDateISO }),
-        ...(endDateISO && { end_date: endDateISO }),
+        ...(startDateISO && { start_time: startDateISO }),
+        ...(endDateISO && { end_time: endDateISO }),
       })
       .eq('id', id)
       .select();
@@ -98,7 +102,9 @@ export const updateEvaluationDate = async ({
   }
 };
 
-export const deleteEvaluation = async (id: number): Promise<GenericAPIResponse> => {
+export const deleteEvaluation = async ({
+  id,
+}: DeleteEvaluationFormData): Promise<GenericAPIResponse> => {
   try {
     const supabase = await createClient();
 

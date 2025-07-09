@@ -3,6 +3,8 @@
 import {
   UpdateClassClassroomFormData,
   UpdateClassTimeFormData,
+  GetClassesByDayOfTheWeek,
+  DeleteClassFormData,
   AddClassFormData,
 } from '@/types/class';
 import { ClassArrayAPIResponse, GenericAPIResponse } from '@/types/responses';
@@ -10,10 +12,10 @@ import { convertTimeToTimez } from '@/utils/lib';
 import { createClient } from '@/utils/supabase/server';
 import { revalidatePath } from 'next/cache';
 
-export const getClassesByDayOfTheWeek = async (
-  day_of_the_week: number,
-  course_id?: number,
-): Promise<ClassArrayAPIResponse> => {
+export const getClassesByDayOfTheWeek = async ({
+  day_of_the_week,
+  course_id,
+}: GetClassesByDayOfTheWeek): Promise<ClassArrayAPIResponse> => {
   try {
     const supabase = await createClient();
 
@@ -34,7 +36,6 @@ export const getClassesByDayOfTheWeek = async (
       return { success: false, error: error.message };
     }
 
-    // @ts-ignore
     return { success: true, data: classes };
   } catch (e: any) {
     console.error(`Unexpected error getting classes by day of the week ${day_of_the_week}`, e);
@@ -136,7 +137,7 @@ export const updateClassClassroom = async ({
   }
 };
 
-export const deleteClass = async (id: number): Promise<GenericAPIResponse> => {
+export const deleteClass = async ({ id }: DeleteClassFormData): Promise<GenericAPIResponse> => {
   try {
     const supabase = await createClient();
 
