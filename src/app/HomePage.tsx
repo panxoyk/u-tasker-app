@@ -44,18 +44,22 @@ import {
   Refresh as RefreshIcon,
   NavigateNext as NavigateNextIcon,
   Dashboard as DashboardIcon,
+  // Add an icon for adding a task
+  NoteAdd as NoteAddIcon,
 } from '@mui/icons-material';
 import TaskCarousel from './tasks/TaskCarousel';
 import type { TaskData } from '@/types/task';
 
 import AccountForm from '@/app/account/AccountForm';
-// No longer importing createClient here as user data is passed via props
-// import { createClient } from '@/utils/supabase/client';
 
 import { type User } from '@supabase/supabase-js';
 
 // Import the new useTasks hook
 import { useTasks } from './hooks/useTasks';
+
+// Import AddTaskForm
+import AddTaskForm from './tasks/add/AddTaskForm'; // Adjust path if needed
+import { CourseData } from '@/types/course'; // Import CourseData type
 
 // Componentes de contenido mejorados
 const HomePageContent = () => {
@@ -132,14 +136,47 @@ const HomePageContent = () => {
 };
 
 const AccountPageContent = ({ user }: { user: User | null }) => {
-  const theme = useTheme();
-
   return (
     <Fade in timeout={500}>
       <Box>
+        <CardContent>
+          <AccountForm user={user} />
+        </CardContent>
+      </Box>
+    </Fade>
+  );
+};
+
+// --- AddTaskPageContent: New Component for AddTaskForm ---
+interface AddTaskPageContentProps {
+  courses: CourseData[];
+  coursesError?: string | null;
+  onTaskAdded: () => void; // Callback to refresh tasks
+  showSnackbar: (message: string, severity: 'success' | 'error' | 'info') => void; // Callback for snackbar
+}
+
+const AddTaskPageContent = ({
+  courses,
+  coursesError,
+  onTaskAdded,
+  showSnackbar,
+}: AddTaskPageContentProps) => {
+  return (
+    <Fade in timeout={500}>
+      <Box>
+        <Card>
           <CardContent>
-            <AccountForm user={user} />
+            <Typography variant="h5" component="h2" gutterBottom>
+              Añadir Nueva Tarea
+            </Typography>
+            <AddTaskForm
+              courses={courses}
+              coursesError={coursesError}
+              onTaskAdded={onTaskAdded} // Pass the callback
+              showSnackbar={showSnackbar} // Pass the snackbar function
+            />
           </CardContent>
+        </Card>
       </Box>
     </Fade>
   );
@@ -149,17 +186,20 @@ const AccountPageContent = ({ user }: { user: User | null }) => {
 interface HomePageProps {
   initialUser: User | null;
   initialTasks: {
-    // MODIFICADO: Ahora es un objeto initialTasks
     pendiente: TaskData[];
     enProceso: TaskData[];
     entregada: TaskData[];
     vencida: TaskData[];
   };
+  initialCourses: CourseData[];
+  coursesError?: string | null;
 }
 
 export default function HomePage({
   initialUser,
-  initialTasks, // MODIFICADO: Desestructurando initialTasks como un solo objeto
+  initialTasks,
+  initialCourses,
+  coursesError,
 }: HomePageProps) {
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
@@ -174,7 +214,7 @@ export default function HomePage({
   // Initialize user state with initialUser prop
   const [user, setUser] = useState<User | null>(initialUser);
   // Set loadingUser to false initially as user data is already provided via prop
-  const [loadingUser, setLoadingUser] = useState(false);
+  const [loadingUser, setLoadingUser] = useState(false); // Consider if this needs to be true if you re-fetch user
 
   // Initialize the useTasks hook with combined initial tasks
   const {
@@ -184,11 +224,6 @@ export default function HomePage({
     reFetchTasks,
     totalTasks,
   } = useTasks(initialTasks);
-
-  // Removed the useEffect that fetches user data client-side
-  // because initialUser is now provided from the server component.
-  // If you need client-side re-authentication or real-time user updates,
-  // you would re-introduce a modified useEffect.
 
   // Function to show notifications
   const showSnackbar = (message: string, severity: 'success' | 'error' | 'info' = 'info') => {
@@ -203,10 +238,15 @@ export default function HomePage({
     if (success) {
       showSnackbar('Tareas actualizadas correctamente', 'success');
     } else {
-      // The hook already sets the error state; we just need to show a generic error message.
       showSnackbar('Error al actualizar las tareas.', 'error');
     }
   }, [reFetchTasks]);
+
+  // Handler for when a task is successfully added
+  const handleTaskAdded = useCallback(() => {
+    handleRefreshTasks(); // Refresh the tasks list
+    setActiveSection('tasks'); // Optionally, navigate to the tasks section
+  }, [handleRefreshTasks]);
 
   const menuItems = useMemo(
     () => [
@@ -259,6 +299,22 @@ export default function HomePage({
         ),
         badge: totalTasks > 0 ? totalTasks : null,
       },
+
+      {
+        id: 'add-task', // NEW: New menu item for adding tasks
+        text: 'Añadir Tarea',
+        icon: <NoteAddIcon />, // Use the new icon
+        component: (
+          <AddTaskPageContent
+            // Ensure courses is always an array, even if initialCourses is null/undefined
+            courses={initialCourses || []}
+            coursesError={coursesError}
+            onTaskAdded={handleTaskAdded}
+            showSnackbar={showSnackbar}
+          />
+        ),
+        badge: null,
+      },
       {
         id: 'account',
         text: 'Cuenta',
@@ -291,6 +347,10 @@ export default function HomePage({
       handleRefreshTasks,
       user,
       loadingUser,
+      initialCourses, // Add initialCourses to dependency array
+      coursesError, // Add coursesError to dependency array
+      handleTaskAdded, // Add handleTaskAdded to dependency array
+      showSnackbar, // Add showSnackbar to dependency array
     ],
   );
 
@@ -444,6 +504,7 @@ export default function HomePage({
                     <RefreshIcon />
                   </IconButton>
                 </Tooltip>
+                {/* Modify the "New Task" button to navigate to 'add-task' section */}
                 <Button
                   variant="contained"
                   startIcon={<AddIcon />}
@@ -454,10 +515,23 @@ export default function HomePage({
                       bgcolor: alpha('#fff', 0.9),
                     },
                   }}
+                  onClick={() => handleMenuItemClick('add-task')} // Navigate to add-task section
                 >
                   Nueva Tarea
                 </Button>
               </>
+            )}
+            {activeSection === 'add-task' && ( // Add a refresh button for add-task page if needed
+              <Tooltip title="Resetear formulario">
+                <IconButton
+                  color="inherit"
+                  onClick={() => {
+                    /* Implement reset logic in AddTaskForm if needed */
+                  }}
+                >
+                  <RefreshIcon />
+                </IconButton>
+              </Tooltip>
             )}
 
             <Tooltip title="Notificaciones">
