@@ -1,6 +1,6 @@
-'use client';
+"use client"
 
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useState, useMemo, useCallback } from "react"
 import {
   AppBar,
   Button,
@@ -33,7 +33,7 @@ import {
   CardContent,
   Grid,
   alpha,
-} from '@mui/material';
+} from "@mui/material"
 import {
   Add as AddIcon,
   Menu as MenuIcon,
@@ -41,29 +41,17 @@ import {
   Assignment as AssignmentIcon,
   AccountCircle as AccountCircleIcon,
   Notifications as NotificationsIcon,
+  Settings as SettingsIcon,
+  Dashboard as DashboardIcon,
   Refresh as RefreshIcon,
   NavigateNext as NavigateNextIcon,
-  Dashboard as DashboardIcon,
-  // Add an icon for adding a task
-  NoteAdd as NoteAddIcon,
-} from '@mui/icons-material';
-import TaskCarousel from './tasks/TaskCarousel';
-import type { TaskData } from '@/types/task';
-
-import AccountForm from '@/app/account/AccountForm';
-
-import { type User } from '@supabase/supabase-js';
-
-// Import the new useTasks hook
-import { useTasks } from './hooks/useTasks';
-
-// Import AddTaskForm
-import AddTaskForm from './tasks/add/AddTaskForm'; // Adjust path if needed
-import { CourseData } from '@/types/course'; // Import CourseData type
+} from "@mui/icons-material"
+import TaskCarousel from "./tasks/TaskCarousel"
+import type { TaskData } from "@/types/task"
 
 // Componentes de contenido mejorados
 const HomePageContent = () => {
-  const theme = useTheme();
+  const theme = useTheme()
 
   return (
     <Fade in timeout={500}>
@@ -73,7 +61,7 @@ const HomePageContent = () => {
             <Card
               sx={{
                 background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
-                color: 'white',
+                color: "white",
                 mb: 3,
               }}
             >
@@ -89,9 +77,9 @@ const HomePageContent = () => {
           </Grid>
 
           <Grid item xs={12} md={4}>
-            <Card sx={{ height: '100%' }}>
+            <Card sx={{ height: "100%" }}>
               <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
                   <DashboardIcon color="primary" sx={{ mr: 1 }} />
                   <Typography variant="h6">Resumen del día</Typography>
                 </Box>
@@ -103,9 +91,9 @@ const HomePageContent = () => {
           </Grid>
 
           <Grid item xs={12} md={4}>
-            <Card sx={{ height: '100%' }}>
+            <Card sx={{ height: "100%" }}>
               <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
                   <AssignmentIcon color="success" sx={{ mr: 1 }} />
                   <Typography variant="h6">Productividad</Typography>
                 </Box>
@@ -117,9 +105,9 @@ const HomePageContent = () => {
           </Grid>
 
           <Grid item xs={12} md={4}>
-            <Card sx={{ height: '100%' }}>
+            <Card sx={{ height: "100%" }}>
               <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
                   <NotificationsIcon color="warning" sx={{ mr: 1 }} />
                   <Typography variant="h6">Recordatorios</Typography>
                 </Box>
@@ -132,143 +120,130 @@ const HomePageContent = () => {
         </Grid>
       </Box>
     </Fade>
-  );
-};
-
-const AccountPageContent = ({ user }: { user: User | null }) => {
-  return (
-    <Fade in timeout={500}>
-      <Box>
-        <CardContent>
-          <AccountForm user={user} />
-        </CardContent>
-      </Box>
-    </Fade>
-  );
-};
-
-// --- AddTaskPageContent: New Component for AddTaskForm ---
-interface AddTaskPageContentProps {
-  courses: CourseData[];
-  coursesError?: string | null;
-  onTaskAdded: () => void; // Callback to refresh tasks
-  showSnackbar: (message: string, severity: 'success' | 'error' | 'info') => void; // Callback for snackbar
+  )
 }
 
-const AddTaskPageContent = ({
-  courses,
-  coursesError,
-  onTaskAdded,
-  showSnackbar,
-}: AddTaskPageContentProps) => {
+const AccountPageContent = () => {
+  const theme = useTheme()
+
   return (
     <Fade in timeout={500}>
       <Box>
-        <Card>
+        <Card sx={{ mb: 3 }}>
           <CardContent>
-            <Typography variant="h5" component="h2" gutterBottom>
-              Añadir Nueva Tarea
-            </Typography>
-            <AddTaskForm
-              courses={courses}
-              coursesError={coursesError}
-              onTaskAdded={onTaskAdded} // Pass the callback
-              showSnackbar={showSnackbar} // Pass the snackbar function
-            />
+            <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
+              <Avatar sx={{ width: 80, height: 80, mr: 3, bgcolor: theme.palette.primary.main }}>
+                <AccountCircleIcon sx={{ fontSize: 40 }} />
+              </Avatar>
+              <Box>
+                <Typography variant="h4" gutterBottom>
+                  Mi Perfil
+                </Typography>
+                <Typography variant="body1" color="text.secondary">
+                  Gestiona tu información personal y preferencias
+                </Typography>
+              </Box>
+            </Box>
+            <Divider sx={{ my: 2 }} />
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
+                <Button variant="outlined" fullWidth startIcon={<SettingsIcon />}>
+                  Configuración
+                </Button>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Button variant="contained" fullWidth>
+                  Editar Perfil
+                </Button>
+              </Grid>
+            </Grid>
           </CardContent>
         </Card>
       </Box>
     </Fade>
-  );
-};
+  )
+}
 
-// --- HomePageProps Interface ---
 interface HomePageProps {
-  initialUser: User | null;
-  initialTasks: {
-    pendiente: TaskData[];
-    enProceso: TaskData[];
-    entregada: TaskData[];
-    vencida: TaskData[];
-  };
-  initialCourses: CourseData[];
-  coursesError?: string | null;
+  initialTasksPendiente: TaskData[]
+  initialTasksEnProceso: TaskData[]
+  initialTasksEntregada: TaskData[]
+  initialTasksVencida: TaskData[]
 }
 
 export default function HomePage({
-  initialUser,
-  initialTasks,
-  initialCourses,
-  coursesError,
+  initialTasksPendiente,
+  initialTasksEnProceso,
+  initialTasksEntregada,
+  initialTasksVencida,
 }: HomePageProps) {
-  const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
-  const [activeSection, setActiveSection] = useState('home');
-  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+  const theme = useTheme()
+  const isDesktop = useMediaQuery(theme.breakpoints.up("md"))
+  const [activeSection, setActiveSection] = useState("home")
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false)
 
-  // States for Snackbar
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error' | 'info'>('info');
+  // Estados de tareas
+  const [tasksPendiente, setTasksPendiente] = useState<TaskData[]>(initialTasksPendiente)
+  const [tasksEnProceso, setTasksEnProceso] = useState<TaskData[]>(initialTasksEnProceso)
+  const [tasksEntregada, setTasksEntregada] = useState<TaskData[]>(initialTasksEntregada)
+  const [tasksVencida, setTasksVencida] = useState<TaskData[]>(initialTasksVencida)
 
-  // Initialize user state with initialUser prop
-  const [user, setUser] = useState<User | null>(initialUser);
-  // Set loadingUser to false initially as user data is already provided via prop
-  const [loadingUser, setLoadingUser] = useState(false); // Consider if this needs to be true if you re-fetch user
+  const [loadingTasks, setLoadingTasks] = useState(false)
+  const [errorTasks, setErrorTasks] = useState<string | null>(null)
+  const [snackbarOpen, setSnackbarOpen] = useState(false)
+  const [snackbarMessage, setSnackbarMessage] = useState("")
+  const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error" | "info">("info")
 
-  // Initialize the useTasks hook with combined initial tasks
-  const {
-    tasks,
-    loading: loadingTasks,
-    error: errorTasks,
-    reFetchTasks,
-    totalTasks,
-  } = useTasks(initialTasks);
+  // Función para mostrar notificaciones
+  const showSnackbar = (message: string, severity: "success" | "error" | "info" = "info") => {
+    setSnackbarMessage(message)
+    setSnackbarSeverity(severity)
+    setSnackbarOpen(true)
+  }
 
-  // Function to show notifications
-  const showSnackbar = (message: string, severity: 'success' | 'error' | 'info' = 'info') => {
-    setSnackbarMessage(message);
-    setSnackbarSeverity(severity);
-    setSnackbarOpen(true);
-  };
-
-  // Handler for refreshing tasks using the hook's reFetchTasks
-  const handleRefreshTasks = useCallback(async () => {
-    const success = await reFetchTasks();
-    if (success) {
-      showSnackbar('Tareas actualizadas correctamente', 'success');
-    } else {
-      showSnackbar('Error al actualizar las tareas.', 'error');
+  // Función para refrescar tareas
+  const reFetchTasks = useCallback(async () => {
+    setLoadingTasks(true)
+    setErrorTasks(null)
+    try {
+      // Simular llamada a API
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+      showSnackbar("Tareas actualizadas correctamente", "success")
+    } catch (err) {
+      console.error("Error al re-cargar las tareas:", err)
+      setErrorTasks("No se pudieron re-cargar las tareas.")
+      showSnackbar("Error al actualizar las tareas", "error")
+    } finally {
+      setLoadingTasks(false)
     }
-  }, [reFetchTasks]);
+  }, [])
 
-  // Handler for when a task is successfully added
-  const handleTaskAdded = useCallback(() => {
-    handleRefreshTasks(); // Refresh the tasks list
-    setActiveSection('tasks'); // Optionally, navigate to the tasks section
-  }, [handleRefreshTasks]);
+  // Calcular totales de tareas
+  const totalTasks = useMemo(() => {
+    return tasksPendiente.length + tasksEnProceso.length + tasksEntregada.length + tasksVencida.length
+  }, [tasksPendiente, tasksEnProceso, tasksEntregada, tasksVencida])
 
   const menuItems = useMemo(
     () => [
       {
-        id: 'home',
-        text: 'Inicio',
+        id: "home",
+        text: "Inicio",
         icon: <HomeIcon />,
         component: <HomePageContent />,
         badge: null,
       },
       {
-        id: 'tasks',
-        text: 'Tareas',
+        id: "tasks",
+        text: "Tareas",
         icon: <AssignmentIcon />,
         component: loadingTasks ? (
           <Box
             sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: '400px',
-              flexDirection: 'column',
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "400px",
+              flexDirection: "column",
               gap: 2,
             }}
           >
@@ -284,111 +259,71 @@ export default function HomePage({
               <Typography color="text.secondary" sx={{ mb: 2 }}>
                 {errorTasks}
               </Typography>
-              <Button onClick={handleRefreshTasks} variant="contained" startIcon={<RefreshIcon />}>
+              <Button onClick={reFetchTasks} variant="contained" startIcon={<RefreshIcon />}>
                 Reintentar
               </Button>
             </CardContent>
           </Card>
         ) : (
           <TaskCarousel
-            tasksPendiente={tasks.pendiente}
-            tasksEnProceso={tasks.enProceso}
-            tasksEntregada={tasks.entregada}
-            tasksVencida={tasks.vencida}
+            tasksPendiente={tasksPendiente}
+            tasksEnProceso={tasksEnProceso}
+            tasksEntregada={tasksEntregada}
+            tasksVencida={tasksVencida}
           />
         ),
         badge: totalTasks > 0 ? totalTasks : null,
       },
-      // The 'add-task' menu item is removed from here
       {
-        id: 'account',
-        text: 'Cuenta',
+        id: "account",
+        text: "Cuenta",
         icon: <AccountCircleIcon />,
-        component: loadingUser ? (
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: '400px',
-              flexDirection: 'column',
-              gap: 2,
-            }}
-          >
-            <CircularProgress size={60} />
-            <Typography variant="h6">Cargando perfil...</Typography>
-          </Box>
-        ) : (
-          <AccountPageContent user={user} />
-        ),
+        component: <AccountPageContent />,
         badge: null,
       },
     ],
     [
+      activeSection,
       loadingTasks,
       errorTasks,
-      tasks, // tasks object from useTasks hook
+      tasksPendiente,
+      tasksEnProceso,
+      tasksEntregada,
+      tasksVencida,
       totalTasks,
-      handleRefreshTasks,
-      user,
-      loadingUser,
-      // initialCourses, // No longer directly used here for add-task component
-      // coursesError, // No longer directly used here for add-task component
-      // handleTaskAdded, // No longer directly used here for add-task component
-      // showSnackbar, // No longer directly used here for add-task component
+      reFetchTasks,
     ],
-  );
-
-  // Define add-task component separately since it's not in the main menuItems
-  const addTaskComponent = useMemo(
-    () => (
-      <AddTaskPageContent
-        courses={initialCourses || []}
-        coursesError={coursesError}
-        onTaskAdded={handleTaskAdded}
-        showSnackbar={showSnackbar}
-      />
-    ),
-    [initialCourses, coursesError, handleTaskAdded, showSnackbar],
-  );
+  )
 
   const appTitle = useMemo(() => {
-    const currentItem = menuItems.find((item) => item.id === activeSection);
-    // If activeSection is 'add-task', manually set the title
-    if (activeSection === 'add-task') {
-      return 'Añadir Tarea';
-    }
-    return currentItem ? currentItem.text : 'Bienvenido';
-  }, [activeSection, menuItems]);
+    const currentItem = menuItems.find((item) => item.id === activeSection)
+    return currentItem ? currentItem.text : "Bienvenido"
+  }, [activeSection, menuItems])
 
   const handleMenuItemClick = (sectionId: string) => {
-    setActiveSection(sectionId);
+    setActiveSection(sectionId)
     if (!isDesktop) {
-      setMobileDrawerOpen(false);
+      setMobileDrawerOpen(false)
     }
-  };
+  }
 
   const currentContent = useMemo(() => {
-    const item = menuItems.find((item) => item.id === activeSection);
-    // If activeSection is 'add-task', return the specific add task component
-    if (activeSection === 'add-task') {
-      return addTaskComponent;
-    }
-    return item ? item.component : <HomePageContent />;
-  }, [activeSection, menuItems, addTaskComponent]);
+    const item = menuItems.find((item) => item.id === activeSection)
+    return item ? item.component : <HomePageContent />
+  }, [activeSection, menuItems])
 
-  const drawerWidth = 280;
+  const drawerWidth = 280
 
   const drawer = (
-    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <Box sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
       <Toolbar
         sx={{
           background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
-          color: 'white',
+          color: "white",
         }}
       >
         <Typography variant="h6" noWrap component="div" fontWeight="bold">
-          U TASKER
+          TaskManager Pro
         </Typography>
       </Toolbar>
 
@@ -402,20 +337,20 @@ export default function HomePage({
                 sx={{
                   borderRadius: 2,
                   mx: 1,
-                  '&.Mui-selected': {
+                  "&.Mui-selected": {
                     bgcolor: alpha(theme.palette.primary.main, 0.1),
-                    '&:hover': {
+                    "&:hover": {
                       bgcolor: alpha(theme.palette.primary.main, 0.2),
                     },
                   },
-                  '&:hover': {
+                  "&:hover": {
                     bgcolor: alpha(theme.palette.action.hover, 0.1),
                   },
                 }}
               >
                 <ListItemIcon
                   sx={{
-                    color: activeSection === item.id ? theme.palette.primary.main : 'inherit',
+                    color: activeSection === item.id ? theme.palette.primary.main : "inherit",
                   }}
                 >
                   {item.badge ? (
@@ -429,9 +364,9 @@ export default function HomePage({
                 <ListItemText
                   primary={item.text}
                   sx={{
-                    '& .MuiListItemText-primary': {
-                      fontWeight: activeSection === item.id ? 'bold' : 'normal',
-                      color: activeSection === item.id ? theme.palette.primary.main : 'inherit',
+                    "& .MuiListItemText-primary": {
+                      fontWeight: activeSection === item.id ? "bold" : "normal",
+                      color: activeSection === item.id ? theme.palette.primary.main : "inherit",
                     },
                   }}
                 />
@@ -448,14 +383,14 @@ export default function HomePage({
           size="small"
           color="primary"
           variant="outlined"
-          sx={{ width: '100%' }}
+          sx={{ width: "100%" }}
         />
       </Box>
     </Box>
-  );
+  )
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: "flex" }}>
       <CssBaseline />
 
       {/* AppBar */}
@@ -473,7 +408,7 @@ export default function HomePage({
             aria-label="open drawer"
             edge="start"
             onClick={() => setMobileDrawerOpen(!mobileDrawerOpen)}
-            sx={{ mr: 2, display: { md: 'none' } }}
+            sx={{ mr: 2, display: { md: "none" } }}
           >
             <MenuIcon />
           </IconButton>
@@ -483,18 +418,18 @@ export default function HomePage({
             <Breadcrumbs
               aria-label="breadcrumb"
               sx={{
-                '& .MuiBreadcrumbs-separator': { color: 'white' },
-                '& .MuiBreadcrumbs-ol': { alignItems: 'center' },
+                "& .MuiBreadcrumbs-separator": { color: "white" },
+                "& .MuiBreadcrumbs-ol": { alignItems: "center" },
               }}
               separator={<NavigateNextIcon fontSize="small" />}
             >
-              <Link color="inherit" href="#" onClick={() => handleMenuItemClick('home')}>
-                <Typography variant="h6" sx={{ color: 'white', opacity: 0.8 }}>
+              <Link color="inherit" href="#" onClick={() => handleMenuItemClick("home")}>
+                <Typography variant="h6" sx={{ color: "white", opacity: 0.8 }}>
                   Inicio
                 </Typography>
               </Link>
-              {activeSection !== 'home' && (
-                <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>
+              {activeSection !== "home" && (
+                <Typography variant="h6" sx={{ color: "white", fontWeight: "bold" }}>
                   {appTitle}
                 </Typography>
               )}
@@ -502,42 +437,33 @@ export default function HomePage({
           </Box>
 
           {/* Botones de acción */}
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            {activeSection === 'tasks' && (
+          <Box sx={{ display: "flex", gap: 1 }}>
+            {activeSection === "tasks" && (
               <>
                 <Tooltip title="Actualizar tareas">
-                  <IconButton color="inherit" onClick={handleRefreshTasks} disabled={loadingTasks}>
+                  <IconButton color="inherit" onClick={reFetchTasks} disabled={loadingTasks}>
                     <RefreshIcon />
                   </IconButton>
                 </Tooltip>
-                {/* Modify the "New Task" button to navigate to 'add-task' section */}
                 <Button
                   variant="contained"
                   startIcon={<AddIcon />}
                   sx={{
-                    bgcolor: 'white',
+                    bgcolor: "white",
                     color: theme.palette.primary.main,
-                    '&:hover': {
-                      bgcolor: alpha('#fff', 0.9),
+                    "&:hover": {
+                      bgcolor: alpha("#fff", 0.9),
                     },
                   }}
-                  onClick={() => handleMenuItemClick('add-task')} // Navigate to add-task section
                 >
                   Nueva Tarea
                 </Button>
               </>
             )}
-            {activeSection === 'add-task' && ( // Add a "go back to tasks" or "reset form" button for add-task page
-              <Tooltip title="Volver a Tareas">
-                <IconButton color="inherit" onClick={() => handleMenuItemClick('tasks')}>
-                  <AssignmentIcon />
-                </IconButton>
-              </Tooltip>
-            )}
 
             <Tooltip title="Notificaciones">
               <IconButton color="inherit">
-                <Badge badgeContent={tasks.vencida.length} color="error">
+                <Badge badgeContent={tasksVencida.length} color="error">
                   <NotificationsIcon />
                 </Badge>
               </IconButton>
@@ -555,8 +481,8 @@ export default function HomePage({
           onClose={() => setMobileDrawerOpen(false)}
           ModalProps={{ keepMounted: true }}
           sx={{
-            display: { xs: 'block', md: 'none' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            display: { xs: "block", md: "none" },
+            "& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth },
           }}
         >
           {drawer}
@@ -566,8 +492,8 @@ export default function HomePage({
         <Drawer
           variant="permanent"
           sx={{
-            display: { xs: 'none', md: 'block' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            display: { xs: "none", md: "block" },
+            "& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth },
           }}
           open
         >
@@ -582,8 +508,8 @@ export default function HomePage({
           flexGrow: 1,
           p: 3,
           width: { md: `calc(100% - ${drawerWidth}px)` },
-          mt: { xs: '56px', sm: '64px' },
-          minHeight: 'calc(100vh - 64px)',
+          mt: { xs: "56px", sm: "64px" },
+          minHeight: "calc(100vh - 64px)",
           bgcolor: alpha(theme.palette.background.default, 0.5),
         }}
       >
@@ -592,22 +518,22 @@ export default function HomePage({
         </Slide>
       </Box>
 
-      {/* Snackbar for notifications */}
+      {/* Snackbar para notificaciones */}
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={4000}
         onClose={() => setSnackbarOpen(false)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
       >
         <Alert
           onClose={() => setSnackbarOpen(false)}
           severity={snackbarSeverity}
           variant="filled"
-          sx={{ width: '100%' }}
+          sx={{ width: "100%" }}
         >
           {snackbarMessage}
         </Alert>
       </Snackbar>
     </Box>
-  );
+  )
 }

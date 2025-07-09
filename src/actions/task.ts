@@ -1,4 +1,5 @@
 // actions/task.ts
+// actions/task.ts
 'use server';
 
 import { GenericAPIResponse, TaskArrayAPIResponse } from '@/types/responses';
@@ -13,10 +14,10 @@ export const getTasksPendiente = async (
   try {
     const supabase = createClient(); // Await is not needed here as createClient typically returns the client directly
 
-    let query = supabase
-      .from('task')
-      .select('id, course_id, title, status, description, due_date, course(name)')
-      .eq('status', status);
+    let query = (await supabase)
+      .from('task') // Your table name 'task'
+      .select('id, course_id, title, status, description, due_date, course(name)') // Join with 'course' table
+      .eq('status', 1);
 
     if (course_id) {
       query = query.eq('course_id', course_id);
@@ -29,8 +30,9 @@ export const getTasksPendiente = async (
       return { success: false, error: error.message };
     }
 
-    // @ts-ignore
-    return { success: true, data: tasks };
+    const processedData = processFetchedTasks(data); // Process data here
+    return { success: true, data: processedData };
+
   } catch (e: any) {
     console.error(`Unexpected error getting tasks by status ${status}:`, e);
     return { success: false, error: e.message || 'An unexpected error occurred' };
@@ -41,7 +43,7 @@ export const getTasksEnProceso = async (
   course_id?: number,
 ): Promise<{ success: boolean; data?: TaskData[]; error?: string }> => {
   try {
-    const supabase = await createClient();
+    const supabase = createClient();
 
     const dueDateISO = convertDateTimeToTimestampz(due_date);
 
@@ -49,11 +51,11 @@ export const getTasksEnProceso = async (
       .from('task')
       .insert([
         {
-          course_id: course_id,
-          title: title,
-          ...(description && { description: description }),
-          ...(dueDateISO && { due_date: dueDateISO }),
-          status: 1,
+          course_id: formData.course_id,
+          title: formData.title,
+          ...(formData.description && { description: formData.description }),
+          ...(due_date && { due_date: due_date }),
+          status: 1, // Default status for new tasks
         },
       ])
       .select('id, course_id, title, status, description, due_date, course(name)'); // Select the full TaskData shape if you want to return it
@@ -72,10 +74,10 @@ export const getTasksEnProceso = async (
   }
 };
 
-export const updateTaskStatus = async ({
-  id,
-  status = 1,
-}: UpdateTaskStatusFormData): Promise<TaskArrayAPIResponse> => {
+export const updateStatusTask = async (
+  id: number,
+  status_id: number = 1, // Default to 1 (pending) if not provided
+): Promise<{ success: boolean; data?: TaskData[]; error?: string }> => {
   try {
     const supabase = createClient();
 
