@@ -1,17 +1,12 @@
-import {
-  getTasksEnProceso,
-  getTasksEntregada,
-  getTasksPendiente,
-  getTasksVencida,
-} from '@/actions/task';
+import { getTasksByStatus } from '@/actions/task';
 import { Container } from '@mui/material';
 import TaskCarousel from '@/app/tasks/TaskCarousel';
 
 export default async function TasksPage() {
-  let { data: tasksPendiente = [], error: errorPendiente } = await getTasksPendiente();
-  let { data: tasksEnProceso = [], error: errorEnProceso } = await getTasksEnProceso();
-  let { data: tasksEntregada = [], error: errorEntregada } = await getTasksEntregada();
-  let { data: tasksVencida = [], error: errorVencida } = await getTasksVencida();
+  let { data: tasksPendiente = [], error: errorPendiente } = await getTasksByStatus(1);
+  let { data: tasksEnProceso = [], error: errorEnProceso } = await getTasksByStatus(2);
+  let { data: tasksEntregada = [], error: errorEntregada } = await getTasksByStatus(3);
+  let { data: tasksVencida = [], error: errorVencida } = await getTasksByStatus(4);
 
   if (errorPendiente) {
     console.error('Error fetching tasks pendiente:', errorPendiente);
