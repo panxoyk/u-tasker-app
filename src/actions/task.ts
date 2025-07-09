@@ -1,7 +1,12 @@
 'use server';
 
 import { GenericAPIResponse, TaskArrayAPIResponse } from '@/types/responses';
-import { AddTaskFormData, UpdateTaskStatusFormData } from '@/types/task';
+import {
+  AddTaskFormData,
+  DeleteTaskFormData,
+  GetTasksByStatus,
+  UpdateTaskStatusFormData,
+} from '@/types/task';
 import { convertDateTimeToTimestampz } from '@/utils/lib';
 import { createClient } from '@/utils/supabase/server';
 import { revalidatePath } from 'next/cache';
@@ -100,7 +105,7 @@ export const updateTaskStatus = async ({
   }
 };
 
-export const deleteTask = async (id: number): Promise<GenericAPIResponse> => {
+export const deleteTask = async ({ id }: DeleteTaskFormData): Promise<GenericAPIResponse> => {
   try {
     const supabase = await createClient();
 

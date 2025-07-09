@@ -3,7 +3,12 @@
 import { createClient } from '@/utils/supabase/server';
 import { UpdateFullNameFormData } from '@/types/profile';
 import { ProfileAPIResponse } from '@/types/responses';
+import { ProfileAPIResponse } from '@/types/responses';
 
+export const updateFullName = async ({
+  name,
+  last_name,
+}: UpdateFullNameFormData): Promise<ProfileAPIResponse> => {
 export const updateFullName = async ({
   name,
   last_name,
@@ -25,6 +30,8 @@ export const updateFullName = async ({
     const { data: profile, error } = await supabase
       .from('profile')
       .update({
+        name: name,
+        last_name: last_name,
         name: name,
         last_name: last_name,
       })
