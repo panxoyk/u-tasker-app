@@ -1,6 +1,6 @@
-"use client"
+'use client';
 
-import { useState, useMemo, useCallback } from "react"
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import {
   AppBar,
   Button,
@@ -33,7 +33,7 @@ import {
   CardContent,
   Grid,
   alpha,
-} from "@mui/material"
+} from '@mui/material';
 import {
   Add as AddIcon,
   Menu as MenuIcon,
@@ -41,17 +41,25 @@ import {
   Assignment as AssignmentIcon,
   AccountCircle as AccountCircleIcon,
   Notifications as NotificationsIcon,
-  Settings as SettingsIcon,
-  Dashboard as DashboardIcon,
   Refresh as RefreshIcon,
   NavigateNext as NavigateNextIcon,
-} from "@mui/icons-material"
-import TaskCarousel from "./tasks/TaskCarousel"
-import type { TaskData } from "@/types/task"
+  Dashboard as DashboardIcon,
+} from '@mui/icons-material';
+import TaskCarousel from './tasks/TaskCarousel';
+import type { TaskData } from '@/types/task';
+
+import AccountForm from '@/app/account/AccountForm';
+// No longer importing createClient here as user data is passed via props
+// import { createClient } from '@/utils/supabase/client';
+
+import { type User } from '@supabase/supabase-js';
+
+// Import the new useTasks hook
+import { useTasks } from './hooks/useTasks';
 
 // Componentes de contenido mejorados
 const HomePageContent = () => {
-  const theme = useTheme()
+  const theme = useTheme();
 
   return (
     <Fade in timeout={500}>
@@ -61,7 +69,7 @@ const HomePageContent = () => {
             <Card
               sx={{
                 background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
-                color: "white",
+                color: 'white',
                 mb: 3,
               }}
             >
@@ -77,9 +85,9 @@ const HomePageContent = () => {
           </Grid>
 
           <Grid item xs={12} md={4}>
-            <Card sx={{ height: "100%" }}>
+            <Card sx={{ height: '100%' }}>
               <CardContent>
-                <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                   <DashboardIcon color="primary" sx={{ mr: 1 }} />
                   <Typography variant="h6">Resumen del día</Typography>
                 </Box>
@@ -91,9 +99,9 @@ const HomePageContent = () => {
           </Grid>
 
           <Grid item xs={12} md={4}>
-            <Card sx={{ height: "100%" }}>
+            <Card sx={{ height: '100%' }}>
               <CardContent>
-                <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                   <AssignmentIcon color="success" sx={{ mr: 1 }} />
                   <Typography variant="h6">Productividad</Typography>
                 </Box>
@@ -105,9 +113,9 @@ const HomePageContent = () => {
           </Grid>
 
           <Grid item xs={12} md={4}>
-            <Card sx={{ height: "100%" }}>
+            <Card sx={{ height: '100%' }}>
               <CardContent>
-                <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                   <NotificationsIcon color="warning" sx={{ mr: 1 }} />
                   <Typography variant="h6">Recordatorios</Typography>
                 </Box>
@@ -120,18 +128,18 @@ const HomePageContent = () => {
         </Grid>
       </Box>
     </Fade>
-  )
-}
+  );
+};
 
-const AccountPageContent = () => {
-  const theme = useTheme()
+const AccountPageContent = ({ user }: { user: User | null }) => {
+  const theme = useTheme();
 
   return (
     <Fade in timeout={500}>
       <Box>
         <Card sx={{ mb: 3 }}>
           <CardContent>
-            <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
               <Avatar sx={{ width: 80, height: 80, mr: 3, bgcolor: theme.palette.primary.main }}>
                 <AccountCircleIcon sx={{ fontSize: 40 }} />
               </Avatar>
@@ -145,105 +153,98 @@ const AccountPageContent = () => {
               </Box>
             </Box>
             <Divider sx={{ my: 2 }} />
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <Button variant="outlined" fullWidth startIcon={<SettingsIcon />}>
-                  Configuración
-                </Button>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Button variant="contained" fullWidth>
-                  Editar Perfil
-                </Button>
-              </Grid>
-            </Grid>
+            <AccountForm user={user} />
           </CardContent>
         </Card>
       </Box>
     </Fade>
-  )
-}
+  );
+};
 
+// --- HomePageProps Interface ---
 interface HomePageProps {
-  initialTasksPendiente: TaskData[]
-  initialTasksEnProceso: TaskData[]
-  initialTasksEntregada: TaskData[]
-  initialTasksVencida: TaskData[]
+  initialUser: User | null;
+  initialTasks: {
+    // MODIFICADO: Ahora es un objeto initialTasks
+    pendiente: TaskData[];
+    enProceso: TaskData[];
+    entregada: TaskData[];
+    vencida: TaskData[];
+  };
 }
 
 export default function HomePage({
-  initialTasksPendiente,
-  initialTasksEnProceso,
-  initialTasksEntregada,
-  initialTasksVencida,
+  initialUser,
+  initialTasks, // MODIFICADO: Desestructurando initialTasks como un solo objeto
 }: HomePageProps) {
-  const theme = useTheme()
-  const isDesktop = useMediaQuery(theme.breakpoints.up("md"))
-  const [activeSection, setActiveSection] = useState("home")
-  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false)
+  const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
+  const [activeSection, setActiveSection] = useState('home');
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 
-  // Estados de tareas
-  const [tasksPendiente, setTasksPendiente] = useState<TaskData[]>(initialTasksPendiente)
-  const [tasksEnProceso, setTasksEnProceso] = useState<TaskData[]>(initialTasksEnProceso)
-  const [tasksEntregada, setTasksEntregada] = useState<TaskData[]>(initialTasksEntregada)
-  const [tasksVencida, setTasksVencida] = useState<TaskData[]>(initialTasksVencida)
+  // States for Snackbar
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error' | 'info'>('info');
 
-  const [loadingTasks, setLoadingTasks] = useState(false)
-  const [errorTasks, setErrorTasks] = useState<string | null>(null)
-  const [snackbarOpen, setSnackbarOpen] = useState(false)
-  const [snackbarMessage, setSnackbarMessage] = useState("")
-  const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error" | "info">("info")
+  // Initialize user state with initialUser prop
+  const [user, setUser] = useState<User | null>(initialUser);
+  // Set loadingUser to false initially as user data is already provided via prop
+  const [loadingUser, setLoadingUser] = useState(false);
 
-  // Función para mostrar notificaciones
-  const showSnackbar = (message: string, severity: "success" | "error" | "info" = "info") => {
-    setSnackbarMessage(message)
-    setSnackbarSeverity(severity)
-    setSnackbarOpen(true)
-  }
+  // Initialize the useTasks hook with combined initial tasks
+  const {
+    tasks,
+    loading: loadingTasks,
+    error: errorTasks,
+    reFetchTasks,
+    totalTasks,
+  } = useTasks(initialTasks);
 
-  // Función para refrescar tareas
-  const reFetchTasks = useCallback(async () => {
-    setLoadingTasks(true)
-    setErrorTasks(null)
-    try {
-      // Simular llamada a API
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      showSnackbar("Tareas actualizadas correctamente", "success")
-    } catch (err) {
-      console.error("Error al re-cargar las tareas:", err)
-      setErrorTasks("No se pudieron re-cargar las tareas.")
-      showSnackbar("Error al actualizar las tareas", "error")
-    } finally {
-      setLoadingTasks(false)
+  // Removed the useEffect that fetches user data client-side
+  // because initialUser is now provided from the server component.
+  // If you need client-side re-authentication or real-time user updates,
+  // you would re-introduce a modified useEffect.
+
+  // Function to show notifications
+  const showSnackbar = (message: string, severity: 'success' | 'error' | 'info' = 'info') => {
+    setSnackbarMessage(message);
+    setSnackbarSeverity(severity);
+    setSnackbarOpen(true);
+  };
+
+  // Handler for refreshing tasks using the hook's reFetchTasks
+  const handleRefreshTasks = useCallback(async () => {
+    const success = await reFetchTasks();
+    if (success) {
+      showSnackbar('Tareas actualizadas correctamente', 'success');
+    } else {
+      // The hook already sets the error state; we just need to show a generic error message.
+      showSnackbar('Error al actualizar las tareas.', 'error');
     }
-  }, [])
-
-  // Calcular totales de tareas
-  const totalTasks = useMemo(() => {
-    return tasksPendiente.length + tasksEnProceso.length + tasksEntregada.length + tasksVencida.length
-  }, [tasksPendiente, tasksEnProceso, tasksEntregada, tasksVencida])
+  }, [reFetchTasks]);
 
   const menuItems = useMemo(
     () => [
       {
-        id: "home",
-        text: "Inicio",
+        id: 'home',
+        text: 'Inicio',
         icon: <HomeIcon />,
         component: <HomePageContent />,
         badge: null,
       },
       {
-        id: "tasks",
-        text: "Tareas",
+        id: 'tasks',
+        text: 'Tareas',
         icon: <AssignmentIcon />,
         component: loadingTasks ? (
           <Box
             sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              height: "400px",
-              flexDirection: "column",
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '400px',
+              flexDirection: 'column',
               gap: 2,
             }}
           >
@@ -259,67 +260,81 @@ export default function HomePage({
               <Typography color="text.secondary" sx={{ mb: 2 }}>
                 {errorTasks}
               </Typography>
-              <Button onClick={reFetchTasks} variant="contained" startIcon={<RefreshIcon />}>
+              <Button onClick={handleRefreshTasks} variant="contained" startIcon={<RefreshIcon />}>
                 Reintentar
               </Button>
             </CardContent>
           </Card>
         ) : (
           <TaskCarousel
-            tasksPendiente={tasksPendiente}
-            tasksEnProceso={tasksEnProceso}
-            tasksEntregada={tasksEntregada}
-            tasksVencida={tasksVencida}
+            tasksPendiente={tasks.pendiente}
+            tasksEnProceso={tasks.enProceso}
+            tasksEntregada={tasks.entregada}
+            tasksVencida={tasks.vencida}
           />
         ),
         badge: totalTasks > 0 ? totalTasks : null,
       },
       {
-        id: "account",
-        text: "Cuenta",
+        id: 'account',
+        text: 'Cuenta',
         icon: <AccountCircleIcon />,
-        component: <AccountPageContent />,
+        component: loadingUser ? (
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '400px',
+              flexDirection: 'column',
+              gap: 2,
+            }}
+          >
+            <CircularProgress size={60} />
+            <Typography variant="h6">Cargando perfil...</Typography>
+          </Box>
+        ) : (
+          <AccountPageContent user={user} />
+        ),
         badge: null,
       },
     ],
     [
-      activeSection,
       loadingTasks,
       errorTasks,
-      tasksPendiente,
-      tasksEnProceso,
-      tasksEntregada,
-      tasksVencida,
+      tasks, // tasks object from useTasks hook
       totalTasks,
-      reFetchTasks,
+      handleRefreshTasks,
+      user,
+      loadingUser,
     ],
-  )
+  );
 
   const appTitle = useMemo(() => {
-    const currentItem = menuItems.find((item) => item.id === activeSection)
-    return currentItem ? currentItem.text : "Bienvenido"
-  }, [activeSection, menuItems])
+    const currentItem = menuItems.find((item) => item.id === activeSection);
+    return currentItem ? currentItem.text : 'Bienvenido';
+  }, [activeSection, menuItems]);
 
   const handleMenuItemClick = (sectionId: string) => {
-    setActiveSection(sectionId)
+    setActiveSection(sectionId);
     if (!isDesktop) {
-      setMobileDrawerOpen(false)
+      setMobileDrawerOpen(false);
     }
-  }
+  };
 
   const currentContent = useMemo(() => {
-    const item = menuItems.find((item) => item.id === activeSection)
-    return item ? item.component : <HomePageContent />
-  }, [activeSection, menuItems])
+    const item = menuItems.find((item) => item.id === activeSection);
+    return item ? item.component : <HomePageContent />;
+  }, [activeSection, menuItems]);
 
-  const drawerWidth = 280
+  const drawerWidth = 280;
 
   const drawer = (
-    <Box sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Toolbar
         sx={{
           background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
-          color: "white",
+          color: 'white',
         }}
       >
         <Typography variant="h6" noWrap component="div" fontWeight="bold">
@@ -337,20 +352,20 @@ export default function HomePage({
                 sx={{
                   borderRadius: 2,
                   mx: 1,
-                  "&.Mui-selected": {
+                  '&.Mui-selected': {
                     bgcolor: alpha(theme.palette.primary.main, 0.1),
-                    "&:hover": {
+                    '&:hover': {
                       bgcolor: alpha(theme.palette.primary.main, 0.2),
                     },
                   },
-                  "&:hover": {
+                  '&:hover': {
                     bgcolor: alpha(theme.palette.action.hover, 0.1),
                   },
                 }}
               >
                 <ListItemIcon
                   sx={{
-                    color: activeSection === item.id ? theme.palette.primary.main : "inherit",
+                    color: activeSection === item.id ? theme.palette.primary.main : 'inherit',
                   }}
                 >
                   {item.badge ? (
@@ -364,9 +379,9 @@ export default function HomePage({
                 <ListItemText
                   primary={item.text}
                   sx={{
-                    "& .MuiListItemText-primary": {
-                      fontWeight: activeSection === item.id ? "bold" : "normal",
-                      color: activeSection === item.id ? theme.palette.primary.main : "inherit",
+                    '& .MuiListItemText-primary': {
+                      fontWeight: activeSection === item.id ? 'bold' : 'normal',
+                      color: activeSection === item.id ? theme.palette.primary.main : 'inherit',
                     },
                   }}
                 />
@@ -383,14 +398,14 @@ export default function HomePage({
           size="small"
           color="primary"
           variant="outlined"
-          sx={{ width: "100%" }}
+          sx={{ width: '100%' }}
         />
       </Box>
     </Box>
-  )
+  );
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ display: 'flex' }}>
       <CssBaseline />
 
       {/* AppBar */}
@@ -408,7 +423,7 @@ export default function HomePage({
             aria-label="open drawer"
             edge="start"
             onClick={() => setMobileDrawerOpen(!mobileDrawerOpen)}
-            sx={{ mr: 2, display: { md: "none" } }}
+            sx={{ mr: 2, display: { md: 'none' } }}
           >
             <MenuIcon />
           </IconButton>
@@ -418,18 +433,18 @@ export default function HomePage({
             <Breadcrumbs
               aria-label="breadcrumb"
               sx={{
-                "& .MuiBreadcrumbs-separator": { color: "white" },
-                "& .MuiBreadcrumbs-ol": { alignItems: "center" },
+                '& .MuiBreadcrumbs-separator': { color: 'white' },
+                '& .MuiBreadcrumbs-ol': { alignItems: 'center' },
               }}
               separator={<NavigateNextIcon fontSize="small" />}
             >
-              <Link color="inherit" href="#" onClick={() => handleMenuItemClick("home")}>
-                <Typography variant="h6" sx={{ color: "white", opacity: 0.8 }}>
+              <Link color="inherit" href="#" onClick={() => handleMenuItemClick('home')}>
+                <Typography variant="h6" sx={{ color: 'white', opacity: 0.8 }}>
                   Inicio
                 </Typography>
               </Link>
-              {activeSection !== "home" && (
-                <Typography variant="h6" sx={{ color: "white", fontWeight: "bold" }}>
+              {activeSection !== 'home' && (
+                <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>
                   {appTitle}
                 </Typography>
               )}
@@ -437,11 +452,11 @@ export default function HomePage({
           </Box>
 
           {/* Botones de acción */}
-          <Box sx={{ display: "flex", gap: 1 }}>
-            {activeSection === "tasks" && (
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            {activeSection === 'tasks' && (
               <>
                 <Tooltip title="Actualizar tareas">
-                  <IconButton color="inherit" onClick={reFetchTasks} disabled={loadingTasks}>
+                  <IconButton color="inherit" onClick={handleRefreshTasks} disabled={loadingTasks}>
                     <RefreshIcon />
                   </IconButton>
                 </Tooltip>
@@ -449,10 +464,10 @@ export default function HomePage({
                   variant="contained"
                   startIcon={<AddIcon />}
                   sx={{
-                    bgcolor: "white",
+                    bgcolor: 'white',
                     color: theme.palette.primary.main,
-                    "&:hover": {
-                      bgcolor: alpha("#fff", 0.9),
+                    '&:hover': {
+                      bgcolor: alpha('#fff', 0.9),
                     },
                   }}
                 >
@@ -463,7 +478,7 @@ export default function HomePage({
 
             <Tooltip title="Notificaciones">
               <IconButton color="inherit">
-                <Badge badgeContent={tasksVencida.length} color="error">
+                <Badge badgeContent={tasks.vencida.length} color="error">
                   <NotificationsIcon />
                 </Badge>
               </IconButton>
@@ -481,8 +496,8 @@ export default function HomePage({
           onClose={() => setMobileDrawerOpen(false)}
           ModalProps={{ keepMounted: true }}
           sx={{
-            display: { xs: "block", md: "none" },
-            "& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth },
+            display: { xs: 'block', md: 'none' },
+            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
           }}
         >
           {drawer}
@@ -492,8 +507,8 @@ export default function HomePage({
         <Drawer
           variant="permanent"
           sx={{
-            display: { xs: "none", md: "block" },
-            "& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth },
+            display: { xs: 'none', md: 'block' },
+            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
           }}
           open
         >
@@ -508,8 +523,8 @@ export default function HomePage({
           flexGrow: 1,
           p: 3,
           width: { md: `calc(100% - ${drawerWidth}px)` },
-          mt: { xs: "56px", sm: "64px" },
-          minHeight: "calc(100vh - 64px)",
+          mt: { xs: '56px', sm: '64px' },
+          minHeight: 'calc(100vh - 64px)',
           bgcolor: alpha(theme.palette.background.default, 0.5),
         }}
       >
@@ -518,22 +533,22 @@ export default function HomePage({
         </Slide>
       </Box>
 
-      {/* Snackbar para notificaciones */}
+      {/* Snackbar for notifications */}
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={4000}
         onClose={() => setSnackbarOpen(false)}
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       >
         <Alert
           onClose={() => setSnackbarOpen(false)}
           severity={snackbarSeverity}
           variant="filled"
-          sx={{ width: "100%" }}
+          sx={{ width: '100%' }}
         >
           {snackbarMessage}
         </Alert>
       </Snackbar>
     </Box>
-  )
+  );
 }
