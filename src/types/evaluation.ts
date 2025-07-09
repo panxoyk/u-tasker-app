@@ -7,10 +7,6 @@ export type EvaluationData = {
   end_date?: string;
 };
 
-export type GetEvaluationsByCourse = {
-  course_id: number;
-};
-
 export type AddEvaluationFormData = {
   course_id: number;
   title: string;
@@ -22,8 +18,4 @@ export type UpdateEvaluationDateFormData = {
   id: number;
   start_date?: string;
   end_date?: string;
-};
-
-export type DeleteEvaluationFormData = {
-  id: number;
 };
