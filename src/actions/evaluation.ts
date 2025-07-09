@@ -20,6 +20,7 @@ export const getEvaluationsByCourse = async (
       return { success: false, error: error.message };
     }
 
+    // @ts-ignore
     return { success: true, data: evaluations };
   } catch (e: any) {
     console.error(`Unexpected error getting evaluations for course ${course_id}`, e);
@@ -45,8 +46,8 @@ export const addEvaluation = async ({
         {
           title: title,
           course_id: course_id,
-          ...(startDateISO && { start_time: startDateISO }),
-          ...(endDateISO && { end_time: endDateISO }),
+          ...(startDateISO && { start_date: startDateISO }),
+          ...(endDateISO && { end_date: endDateISO }),
         },
       ])
       .select();
@@ -78,8 +79,8 @@ export const updateEvaluationDate = async ({
     const { data: evaluation, error } = await supabase
       .from('evaluation')
       .update({
-        ...(startDateISO && { start_time: startDateISO }),
-        ...(endDateISO && { end_time: endDateISO }),
+        ...(startDateISO && { start_date: startDateISO }),
+        ...(endDateISO && { end_date: endDateISO }),
       })
       .eq('id', id)
       .select();

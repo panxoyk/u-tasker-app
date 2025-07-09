@@ -1,7 +1,7 @@
 export type ClassData = {
   id: number;
   course_id: number;
-  course: { name: string }[] | { name: string };
+  course: { name: string };
   day_of_the_week: number;
   start_time: string;
   end_time: string;
