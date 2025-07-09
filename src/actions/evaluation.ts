@@ -1,12 +1,17 @@
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/utils/supabase/server';
-import { AddEvaluationFormData, UpdateEvaluationDateFormData } from '../types/evaluation';
+import {
+  AddEvaluationFormData,
+  DeleteEvaluationFormData,
+  GetEvaluationsByCourse,
+  UpdateEvaluationDateFormData,
+} from '../types/evaluation';
 import { EvaluationArrayAPIResponse, GenericAPIResponse } from '@/types/responses';
 import { convertDateTimeToTimestampz } from '@/utils/lib';
 
-export const getEvaluationsByCourse = async (
-  course_id: number,
-): Promise<EvaluationArrayAPIResponse> => {
+export const getEvaluationsByCourse = async ({
+  course_id,
+}: GetEvaluationsByCourse): Promise<EvaluationArrayAPIResponse> => {
   try {
     const supabase = await createClient();
 
@@ -97,7 +102,9 @@ export const updateEvaluationDate = async ({
   }
 };
 
-export const deleteEvaluation = async (id: number): Promise<GenericAPIResponse> => {
+export const deleteEvaluation = async ({
+  id,
+}: DeleteEvaluationFormData): Promise<GenericAPIResponse> => {
   try {
     const supabase = await createClient();
 
