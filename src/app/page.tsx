@@ -1,44 +1,62 @@
-// app/page.tsx
-// NO 'use client' aquí, este es un Server Component por defecto
-
+import { createClient } from '@/utils/supabase/server'; // Se usa el cliente de servidor
 import {
   getTasksEnProceso,
   getTasksEntregada,
   getTasksPendiente,
   getTasksVencida,
-} from '@/actions/task'; // Asume que tus Server Actions están en esta ruta
-import HomePage from './HomePage'; // Asegúrate de que la ruta sea correcta
+} from '@/actions/task';
+import HomePage from './HomePage';
 
 export default async function Page() {
-  // Llama a las Server Actions directamente
-  const { data: tasksPendiente = [], error: errorPendiente } = await getTasksPendiente();
-  const { data: tasksEnProceso = [], error: errorEnProceso } = await getTasksEnProceso();
-  const { data: tasksEntregada = [], error: errorEntregada } = await getTasksEntregada();
-  const { data: tasksVencida = [], error: errorVencida } = await getTasksVencida();
+  const supabase = createClient();
+  
+  // 1. OBTENCIÓN DE DATOS EN PARALELO
+  // Usamos Promise.all para ejecutar todas las promesas simultáneamente.
+  const [
+    userResponse,
+    tasksPendienteResult,
+    tasksEnProcesoResult,
+    tasksEntregadaResult,
+    tasksVencidaResult,
+  ] = await Promise.all([
+    (await supabase).auth.getUser(), // Obtenemos el usuario en el servidor
+    getTasksPendiente(),
+    getTasksEnProceso(),
+    getTasksEntregada(),
+    getTasksVencida(),
+  ]);
 
-  // Puedes manejar los errores de forma más sofisticada,
-  // por ahora, solo logueamos y mostramos un mensaje simple.
-  if (errorPendiente) console.error('Error fetching tasks pendiente:', errorPendiente);
-  if (errorEnProceso) console.error('Error fetching tasks en proceso:', errorEnProceso);
-  if (errorEntregada) console.error('Error fetching tasks entregada:', errorEntregada);
-  if (errorVencida) console.error('Error fetching tasks vencida:', errorVencida);
-
-  // Considera un componente de error más amigable si alguno falla
-  if (errorPendiente || errorEnProceso || errorEntregada || errorVencida) {
+  // Extraemos los datos y errores de cada resultado
+  const { data: { user } } = userResponse;
+  const { data: tasksPendiente = [], error: errorPendiente } = tasksPendienteResult;
+  const { data: tasksEnProceso = [], error: errorEnProceso } = tasksEnProcesoResult;
+  const { data: tasksEntregada = [], error: errorEntregada } = tasksEntregadaResult;
+  const { data: tasksVencida = [], error: errorVencida } = tasksVencidaResult;
+  
+  // 2. MANEJO DE ERRORES CENTRALIZADO
+  // Verificamos si alguna de las promesas falló.
+  const errors = [errorPendiente, errorEnProceso, errorEntregada, errorVencida].filter(Boolean);
+  
+  if (errors.length > 0) {
+    errors.forEach(error => console.error('Error fetching tasks:', error));
     return (
       <div>
-        <p>Hubo un error al cargar algunas tareas. Por favor, inténtalo de nuevo más tarde.</p>
+        <p>Hubo un error al cargar las tareas. Por favor, inténtalo de nuevo más tarde.</p>
       </div>
     );
   }
 
-  // Pasa los datos obtenidos a HomePage como props
+  // 3. PASAMOS TODOS LOS DATOS INICIALES AL CLIENTE
+  // Incluimos el usuario y un objeto consolidado de tareas.
   return (
     <HomePage
-      initialTasksPendiente={tasksPendiente}
-      initialTasksEnProceso={tasksEnProceso}
-      initialTasksEntregada={tasksEntregada}
-      initialTasksVencida={tasksVencida}
+      initialUser={user}
+      initialTasks={{
+        pendiente: tasksPendiente,
+        enProceso: tasksEnProceso,
+        entregada: tasksEntregada,
+        vencida: tasksVencida,
+      }}
     />
   );
 }
