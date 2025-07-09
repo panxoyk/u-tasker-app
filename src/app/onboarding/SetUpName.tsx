@@ -57,7 +57,7 @@ export default function SetUpNameOnBoarding(props: SetUpnameOnBoardingProps) {
             variant="h4"
             sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
           >
-            Complete your personal information
+            Completa tu información personal
           </Typography>
           <Controller
             name="name"
@@ -72,12 +72,12 @@ export default function SetUpNameOnBoarding(props: SetUpnameOnBoardingProps) {
             }}
             render={({ field }) => (
               <FormControl>
-                <FormLabel htmlFor="name-setup-name">First Name</FormLabel>
+                <FormLabel htmlFor="name-setup-name">Nombre</FormLabel>
                 <TextField
                   {...field}
                   id="name-setup-name"
-                  autoComplete="name"
-                  placeholder="John"
+                  autoComplete="off"
+                  placeholder="Francisco"
                   autoFocus
                   fullWidth
                   variant="outlined"
@@ -106,12 +106,12 @@ export default function SetUpNameOnBoarding(props: SetUpnameOnBoardingProps) {
             }}
             render={({ field }) => (
               <FormControl>
-                <FormLabel htmlFor="last-name-setup-name">Last Name</FormLabel>
+                <FormLabel htmlFor="last-name-setup-name">Apellido</FormLabel>
                 <TextField
                   {...field}
                   id="last-name-setup-name"
-                  autoComplete="family-name"
-                  placeholder="Snow"
+                  autoComplete="off"
+                  placeholder="Castillo"
                   fullWidth
                   variant="outlined"
                   color="primary"
@@ -127,7 +127,7 @@ export default function SetUpNameOnBoarding(props: SetUpnameOnBoardingProps) {
             )}
           />
           <Button type="submit" fullWidth variant="contained" color="primary">
-            Continue
+            Siguiente
           </Button>
           <HorizontalLinearLabelStepper steps={props.steps} activeStep={0} />
         </Box>
