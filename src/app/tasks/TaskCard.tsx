@@ -15,6 +15,7 @@ import PlayCircleOutlineOutlinedIcon from '@mui/icons-material/PlayCircleOutline
 import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined';
 import { useState } from 'react';
 import { deleteTask, updateStatusTask } from '@/actions/task';
+import { formatDate } from '@/utils/lib';
 
 interface TaskCardProps {
   task: TaskData;
@@ -51,7 +52,7 @@ export default function TaskCard({ task }: TaskCardProps) {
           {task.title}
         </Typography>
         <Typography sx={{ color: 'text.secondary', mb: 1.5 }}>
-          Due date: {task.due_date || 'No'}
+          Due date: {formatDate(task.due_date)}
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
           {task.description}

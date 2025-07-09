@@ -1,11 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { Box, IconButton, AppBar, Toolbar, Typography } from '@mui/material'; // Importamos AppBar y Toolbar
+import { Box, IconButton, AppBar, Toolbar, Typography, Button } from '@mui/material'; // Importamos AppBar y Toolbar
 import TasksList from '@/app/tasks/TasksList';
 import { TaskData } from '@/types/task';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNewOutlined';
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+import Link from 'next/link';
 
 interface TasksCarouselProps {
   tasksPendiente: TaskData[];
@@ -51,6 +53,11 @@ export default function TasksCarousel({
           <Typography variant="h3" component="div" sx={{ flexGrow: 1 }}>
             Tasks
           </Typography>
+          <Link href="/tasks/add">
+            <Button variant="contained" startIcon={<AddOutlinedIcon />}>
+              Add Task
+            </Button>
+          </Link>
         </Toolbar>
       </AppBar>
       <Box

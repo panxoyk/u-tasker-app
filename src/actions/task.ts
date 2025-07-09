@@ -125,14 +125,21 @@ export const addTask = async (
   try {
     const supabase = await createClient();
 
+    const dueDateFormValue = formData.due_date;
+    let due_date: string = '';
+    if (dueDateFormValue) {
+      const dateObj = new Date(dueDateFormValue);
+      due_date = dateObj.toISOString();
+    }
+
     const { data: task, error } = await supabase
       .from('task')
       .insert([
         {
           course_id: formData.course_id,
           title: formData.title,
-          description: formData.description,
-          due_date: formData.due_date,
+          ...(formData.description && { description: formData.description }),
+          ...(due_date && { due_date: due_date }),
           status: 1,
         },
       ])
@@ -143,6 +150,7 @@ export const addTask = async (
       return { success: false, error: error.message };
     }
 
+    revalidatePath('/tasks', 'layout');
     return { success: true, data: task };
   } catch (e: any) {
     console.error('Unexpected error adding task:', e);
@@ -176,9 +184,7 @@ export const updateStatusTask = async (
   }
 };
 
-export const deleteTask = async (
-  id: number,
-): Promise<{ success: boolean; error?: string }> => {
+export const deleteTask = async (id: number): Promise<{ success: boolean; error?: string }> => {
   try {
     const supabase = await createClient();
 

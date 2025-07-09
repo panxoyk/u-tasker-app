@@ -14,7 +14,6 @@ import { Controller, useForm } from 'react-hook-form';
 import { redirect } from 'next/navigation';
 import { createPeriod } from '@/actions/period';
 import { CreatePeriodFormData } from '@/types/period';
-import AppTheme from '@/theme/AppTheme';
 import HorizontalLinearLabelStepper from '@/components/HorizontalLinearLabelStepper';
 
 interface CreatePeriodOnBoardingProps {
