@@ -20,10 +20,9 @@ import { updateFullName } from '@/actions/profile';
 interface SetUpnameOnBoardingProps {
   handleNext: () => void;
   steps: string[];
-  disableCustomTheme?: boolean;
 }
 
-const SetUpNameOnBoarding = (props: SetUpnameOnBoardingProps) => {
+export default function SetUpNameOnBoarding(props: SetUpnameOnBoardingProps) {
   const {
     control,
     handleSubmit,
@@ -46,8 +45,7 @@ const SetUpNameOnBoarding = (props: SetUpnameOnBoardingProps) => {
   };
 
   return (
-    <AppTheme {...props}>
-      <CssBaseline enableColorScheme />
+    <div>
       <Container maxWidth="xs" sx={{ marginTop: 8 }}>
         <Box
           component={'form'}
@@ -134,8 +132,6 @@ const SetUpNameOnBoarding = (props: SetUpnameOnBoardingProps) => {
           <HorizontalLinearLabelStepper steps={props.steps} activeStep={0} />
         </Box>
       </Container>
-    </AppTheme>
+    </div>
   );
-};
-
-export default SetUpNameOnBoarding;
+}

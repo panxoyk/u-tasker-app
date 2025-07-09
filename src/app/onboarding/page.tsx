@@ -1,7 +1,6 @@
 'use client';
 
-import HorizontalLinearLabelStepper from '@/components/HorizontalLinearLabelStepper';
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import { useState } from 'react';
 import SetUpName from './SetUpName';
 import CreatePeriod from './CreatePeriod';
