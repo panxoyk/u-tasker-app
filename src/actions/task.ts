@@ -22,7 +22,7 @@ export const getTasksPendiente = async (
       query = query.eq('course_id', course_id);
     }
 
-    const { data, error } = await query;
+    const { data: tasks, error } = await query;
 
     if (error) {
       console.error(`Error getting tasks by status ${status}:`, error);
@@ -41,7 +41,7 @@ export const getTasksEnProceso = async (
   course_id?: number,
 ): Promise<{ success: boolean; data?: TaskData[]; error?: string }> => {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
 
     const dueDateISO = convertDateTimeToTimestampz(due_date);
 
