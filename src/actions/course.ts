@@ -1,9 +1,14 @@
 'use server';
 
 import { AddCourseFormData, CourseData } from '@/types/course';
+import { CourseArrayAPIResponse } from '@/types/responses';
 import { createClient } from '@/utils/supabase/server';
 
-export const addCourse = async (formData: AddCourseFormData) => {
+export const addCourse = async ({
+  course,
+  code,
+  credits,
+}: AddCourseFormData): Promise<CourseArrayAPIResponse> => {
   try {
     const supabase = await createClient();
 
@@ -13,44 +18,40 @@ export const addCourse = async (formData: AddCourseFormData) => {
       .eq('status', 1);
 
     if (periodError) {
-      console.error('Error al buscar el período activo:', periodError);
+      console.error('Error finding active period:', periodError);
       return { success: false, error: periodError.message };
     }
 
     if (!periods || periods.length === 0) {
-      console.error('No se encontró un período activo o válido para el usuario.');
+      console.error('Do not have an active period.');
       return { success: false, error: 'No active period found for the user.' };
     }
 
-    const { data: course, error: insertError } = await supabase
+    const { data: data, error } = await supabase
       .from('course')
       .insert([
         {
-          name: formData.course,
-          ...(formData.code && { code: formData.code }),
-          ...(formData.credits && { credits: Number(formData.credits) }),
+          name: course,
+          ...(code && { code: code }),
+          ...(credits && { credits: Number(credits) }),
           period_id: periods[0].id,
         },
       ])
       .select();
 
-    if (insertError) {
-      console.error('Error al insertar el curso:', insertError);
-      return { success: false, error: insertError.message };
+    if (error) {
+      console.error('Error adding course:', error);
+      return { success: false, error: error.message };
     }
 
-    return { success: true, data: course };
+    return { success: true, data: data };
   } catch (e: any) {
-    console.error('Error inesperado en la función addCourse:', e);
+    console.error('Unexpected error adding course:', e);
     return { success: false, error: e.message || 'An unexpected error occurred' };
   }
 };
 
-export const getAllCoursesFromActivePeriod = async (): Promise<{
-  success: boolean;
-  data?: CourseData[];
-  error?: string;
-}> => {
+export const getAllCoursesFromActivePeriod = async (): Promise<CourseArrayAPIResponse> => {
   try {
     const supabase = await createClient();
 
@@ -65,8 +66,8 @@ export const getAllCoursesFromActivePeriod = async (): Promise<{
     }
 
     if (!periods || periods.length === 0) {
-      console.error('No active periods found with status 1. Cannot fetch courses.');
-      return { success: false, error: 'No active period found' };
+      console.error('Do not have an active period.');
+      return { success: false, error: 'No active period found.' };
     }
 
     const { data: courses, error } = await supabase
@@ -81,7 +82,7 @@ export const getAllCoursesFromActivePeriod = async (): Promise<{
 
     return { success: true, data: courses };
   } catch (e: any) {
-    console.error('Error inesperado en la función getAllCoursesFromActivePeriod:', e);
+    console.error('Unexpected error getting courses from active period:', e);
     return { success: false, error: e.message || 'An unexpected error occurred' };
   }
 };
