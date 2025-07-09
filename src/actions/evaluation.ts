@@ -1,3 +1,5 @@
+'use server';
+
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/utils/supabase/server';
 import { AddEvaluationFormData, UpdateEvaluationDateFormData } from '../types/evaluation';
@@ -45,8 +47,8 @@ export const addEvaluation = async ({
         {
           title: title,
           course_id: course_id,
-          ...(startDateISO && { start_time: startDateISO }),
-          ...(endDateISO && { end_time: endDateISO }),
+          ...(startDateISO && { start_date: startDateISO }),
+          ...(endDateISO && { end_date: endDateISO }),
         },
       ])
       .select();
@@ -78,8 +80,8 @@ export const updateEvaluationDate = async ({
     const { data: evaluation, error } = await supabase
       .from('evaluation')
       .update({
-        ...(startDateISO && { start_time: startDateISO }),
-        ...(endDateISO && { end_time: endDateISO }),
+        ...(startDateISO && { start_date: startDateISO }),
+        ...(endDateISO && { end_date: endDateISO }),
       })
       .eq('id', id)
       .select();
