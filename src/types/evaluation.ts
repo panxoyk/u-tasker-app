@@ -1,7 +1,7 @@
 export type EvaluationData = {
   id: number;
   course_id: number;
-  course: { name: string }[] | { name: string };
+  course: { name: string };
   title: string;
   start_date?: string;
   end_date?: string;

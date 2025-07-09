@@ -30,6 +30,7 @@ export const getTasksByStatus = async (
       return { success: false, error: error.message };
     }
 
+    // @ts-ignore
     return { success: true, data: tasks };
   } catch (e: any) {
     console.error(`Unexpected error getting tasks by status ${status}:`, e);

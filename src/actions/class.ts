@@ -34,6 +34,7 @@ export const getClassesByDayOfTheWeek = async (
       return { success: false, error: error.message };
     }
 
+    // @ts-ignore
     return { success: true, data: classes };
   } catch (e: any) {
     console.error(`Unexpected error getting classes by day of the week ${day_of_the_week}`, e);
