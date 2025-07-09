@@ -1,7 +1,7 @@
 export type TaskData = {
   id: number;
   course_id: number;
-  course: { name: string };
+  course: { name: string } | { name: string }[];
   title: string;
   status: number;
   description?: string;
