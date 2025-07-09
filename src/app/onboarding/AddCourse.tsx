@@ -56,7 +56,7 @@ export default function AddCourseOnBoarding(props: AddCourseOnBoardingProps) {
             variant="h4"
             sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
           >
-            Add your first course
+            Agrega tu primer curso
           </Typography>
           <Controller
             name="course"
@@ -71,14 +71,15 @@ export default function AddCourseOnBoarding(props: AddCourseOnBoardingProps) {
             }}
             render={({ field }) => (
               <FormControl>
-                <FormLabel htmlFor="name-add-course">Name</FormLabel>
+                <FormLabel htmlFor="name-add-course">Nombre</FormLabel>
                 <TextField
                   {...field}
                   id="name-add-course"
-                  placeholder="Physics"
+                  placeholder="Física"
                   autoFocus
                   fullWidth
                   variant="outlined"
+                  autoComplete="off"
                   color="primary"
                   error={!!errors.course}
                   helperText={errors.course?.message}
@@ -96,11 +97,12 @@ export default function AddCourseOnBoarding(props: AddCourseOnBoardingProps) {
             control={control}
             render={({ field }) => (
               <FormControl>
-                <FormLabel htmlFor="code-setup-name">Code</FormLabel>
+                <FormLabel htmlFor="code-setup-name">Código</FormLabel>
                 <TextField
                   {...field}
                   id="code-add-course"
                   placeholder="PHY"
+                  autoComplete="off"
                   fullWidth
                   variant="outlined"
                   color="primary"
@@ -118,11 +120,12 @@ export default function AddCourseOnBoarding(props: AddCourseOnBoardingProps) {
             control={control}
             render={({ field }) => (
               <FormControl>
-                <FormLabel htmlFor="credits-setup-name">Credits</FormLabel>
+                <FormLabel htmlFor="credits-setup-name">Créditos</FormLabel>
                 <TextField
                   {...field}
                   id="credits-add-course"
                   placeholder="5"
+                  autoComplete="off"
                   fullWidth
                   type="number"
                   variant="outlined"
@@ -137,7 +140,7 @@ export default function AddCourseOnBoarding(props: AddCourseOnBoardingProps) {
             )}
           />
           <Button type="submit" fullWidth variant="contained" color="primary">
-            Continue
+            Finalizar
           </Button>
           <HorizontalLinearLabelStepper steps={props.steps} activeStep={2} />
         </Box>
