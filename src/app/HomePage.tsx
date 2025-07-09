@@ -137,25 +137,9 @@ const AccountPageContent = ({ user }: { user: User | null }) => {
   return (
     <Fade in timeout={500}>
       <Box>
-        <Card sx={{ mb: 3 }}>
           <CardContent>
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-              <Avatar sx={{ width: 80, height: 80, mr: 3, bgcolor: theme.palette.primary.main }}>
-                <AccountCircleIcon sx={{ fontSize: 40 }} />
-              </Avatar>
-              <Box>
-                <Typography variant="h4" gutterBottom>
-                  Mi Perfil
-                </Typography>
-                <Typography variant="body1" color="text.secondary">
-                  Gestiona tu información personal y preferencias
-                </Typography>
-              </Box>
-            </Box>
-            <Divider sx={{ my: 2 }} />
             <AccountForm user={user} />
           </CardContent>
-        </Card>
       </Box>
     </Fade>
   );
