@@ -5,26 +5,14 @@ import AddTaskForm from './AddTaskForm';
 export default async function AddTaskPage() {
   const { data: courses, error } = await getAllCoursesFromActivePeriod();
 
-  return (
-    <div>
-      <Container maxWidth="sm">
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            minHeight: '100vh',
-          }}
-        >
-          <AppBar position="fixed" color="primary" sx={{ top: 0, bottom: 'auto' }}>
-            <Toolbar>
-              <Typography variant="h3" component="div" sx={{ flexGrow: 1 }}>
-                Tasks
-              </Typography>
-            </Toolbar>
-          </AppBar>
-          <AddTaskForm courses={courses || []} coursesError={error} />
-        </Box>
+  if (error) {
+    console.error('Error fetching courses:', error);
+    return (
+      <Container>
+        <Typography variant="h6" color="error">
+          Error al cargar los cursos. Por favor, inténtalo de nuevo más tarde.
+        </Typography>
       </Container>
-    </div>
-  );
+    );
+  }
 }

@@ -6,6 +6,7 @@ import {
   getTasksVencida,
 } from '@/actions/task';
 import HomePage from './HomePage';
+import { getAllCoursesFromActivePeriod } from '@/actions/course';
 
 export default async function Page() {
   const supabase = createClient();
@@ -26,6 +27,8 @@ export default async function Page() {
     getTasksVencida(),
   ]);
 
+   const { data: courses, error } = await getAllCoursesFromActivePeriod();
+  
   // Extraemos los datos y errores de cada resultado
   const { data: { user } } = userResponse;
   const { data: tasksPendiente = [], error: errorPendiente } = tasksPendienteResult;
@@ -56,7 +59,6 @@ export default async function Page() {
         enProceso: tasksEnProceso,
         entregada: tasksEntregada,
         vencida: tasksVencida,
-      }}
-    />
+      }} initialCourses={courses || []} />
   );
 }
