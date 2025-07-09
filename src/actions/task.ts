@@ -1,10 +1,7 @@
 // actions/task.ts
-// actions/task.ts
 'use server';
 
-import { GenericAPIResponse, TaskArrayAPIResponse } from '@/types/responses';
-import { AddTaskFormData, UpdateTaskStatusFormData } from '@/types/task';
-import { convertDateTimeToTimestampz } from '@/utils/lib';
+import { AddTaskFormData, TaskData } from '@/types/task';
 import { createClient } from '@/utils/supabase/server';
 import { revalidatePath } from 'next/cache';
 
@@ -30,7 +27,7 @@ export const getTasksPendiente = async (
       return { success: false, error: error.message };
     }
 
-    const processedData = processFetchedTasks(data); // Process data here
+    const processedData = processFetchedTasks(data);
     return { success: true, data: processedData };
 
   } catch (e: any) {
@@ -39,7 +36,7 @@ export const getTasksPendiente = async (
   }
 };
 
-export const getTasksEnProceso = async (
+export const getTasksVencida = async (
   course_id?: number,
 ): Promise<{ success: boolean; data?: TaskData[]; error?: string }> => {
   try {
@@ -51,11 +48,11 @@ export const getTasksEnProceso = async (
       .from('task')
       .insert([
         {
-          course_id: course_id,
-          title: title,
-          ...(description && { description: description }),
-          ...(dueDateISO && { due_date: dueDateISO }),
-          status: 1,
+          course_id: formData.course_id,
+          title: formData.title,
+          ...(formData.description && { description: formData.description }),
+          ...(due_date && { due_date: due_date }),
+          status: 1, // Default status for new tasks
         },
       ])
       .select('id, course_id, title, status, description, due_date, course(name)'); // Select the full TaskData shape if you want to return it
@@ -74,21 +71,21 @@ export const getTasksEnProceso = async (
   }
 };
 
-export const updateTaskStatus = async ({
-  id,
-  status = 1,
-}: UpdateTaskStatusFormData): Promise<TaskArrayAPIResponse> => {
+export const updateStatusTask = async (
+  id: number,
+  status_id: number = 1, // Default to 1 (pending) if not provided
+): Promise<{ success: boolean; data?: TaskData[]; error?: string }> => {
   try {
     const supabase = createClient();
 
     const { data: task, error } = await (await supabase)
       .from('task')
-      .update({ status: status })
+      .update({ status: status_id })
       .eq('id', id)
       .select('id, course_id, title, status, description, due_date, course(name)'); // Select the full TaskData shape
 
     if (error) {
-      console.error('Error updating task status:', error);
+      console.error('Error updating status task:', error);
       return { success: false, error: error.message };
     }
 
@@ -96,12 +93,12 @@ export const updateTaskStatus = async ({
     revalidatePath('/tasks', 'layout');
     return { success: true, data: processedData };
   } catch (e: any) {
-    console.error('Unexpected error updating task status:', e);
+    console.error('Unexpected error updating status task:', e);
     return { success: false, error: e.message || 'An unexpected error occurred' };
   }
 };
 
-export const deleteTask = async (id: number): Promise<GenericAPIResponse> => {
+export const deleteTask = async (id: number): Promise<{ success: boolean; error?: string }> => {
   try {
     const supabase = createClient();
 
