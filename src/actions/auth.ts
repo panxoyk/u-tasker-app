@@ -37,7 +37,6 @@ export const signup = async (formData: SignUpFormData) => {
   };
 
   const { error } = await supabase.auth.signUp(data);
-  console.log('Signup error:', error);
 
   if (error) {
     redirect('/error');

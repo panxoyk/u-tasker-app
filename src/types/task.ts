@@ -1,10 +1,3 @@
-export type AddTaskFormData = {
-  course_id: number;
-  title: string;
-  description?: string;
-  due_date?: string;
-};
-
 export type TaskData = {
   id: number;
   course_id: number;
@@ -13,4 +6,25 @@ export type TaskData = {
   status: number;
   description?: string;
   due_date?: string;
+};
+
+export type GetTasksByStatus = {
+  status: number;
+  course_id?: number;
+};
+
+export type AddTaskFormData = {
+  course_id: number;
+  title: string;
+  description?: string;
+  due_date?: string;
+};
+
+export type UpdateTaskStatusFormData = {
+  id: number;
+  status: number;
+};
+
+export type DeleteTaskFormData = {
+  id: number;
 };
