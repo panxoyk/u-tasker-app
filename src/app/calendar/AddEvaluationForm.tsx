@@ -24,7 +24,11 @@ interface AddEvaluationFormProps {
   onSuccess: () => void;
 }
 
-export default function AddEvaluationForm({ courses, coursesError, onSuccess }: AddEvaluationFormProps) {
+export default function AddEvaluationForm({
+  courses,
+  coursesError,
+  onSuccess,
+}: AddEvaluationFormProps) {
   const router = useRouter();
 
   const {

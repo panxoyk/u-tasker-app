@@ -1,11 +1,21 @@
-"use client"
-import { Controller, useForm } from "react-hook-form"
-import { Container, Box, Typography, FormControl, FormLabel, TextField, Button, Paper, Stack } from "@mui/material"
-import { redirect } from "next/navigation"
-import type { AddCourseFormData } from "@/types/course"
-import HorizontalLinearLabelStepper from "@/components/HorizontalLinearLabelStepper"
-import { addCourse } from "@/actions/course"
-import SchoolIcon from "@mui/icons-material/School"
+'use client';
+import { Controller, useForm } from 'react-hook-form';
+import {
+  Container,
+  Box,
+  Typography,
+  FormControl,
+  FormLabel,
+  TextField,
+  Button,
+  Paper,
+  Stack,
+} from '@mui/material';
+import { redirect } from 'next/navigation';
+import type { AddCourseFormData } from '@/types/course';
+import HorizontalLinearLabelStepper from '@/components/HorizontalLinearLabelStepper';
+import { addCourse } from '@/actions/course';
+import SchoolIcon from '@mui/icons-material/School';
 
 export default function AddCoursePage() {
   const {
@@ -14,41 +24,47 @@ export default function AddCoursePage() {
     formState: { errors },
   } = useForm<AddCourseFormData>({
     defaultValues: {
-      course: "",
-      code: "",
-      credits: "",
+      course: '',
+      code: '',
+      credits: '',
     },
-  })
+  });
 
-  const onboardingSteps = ["Welcome", "Add your first course", "Set up timetable", "All set"]
+  const onboardingSteps = ['Welcome', 'Add your first course', 'Set up timetable', 'All set'];
 
   const onSubmit = async (formData: AddCourseFormData) => {
-    const result = await addCourse(formData)
+    const result = await addCourse(formData);
     if (result.success) {
-      redirect("/")
+      redirect('/');
     } else {
-      console.error("Error al añadir el curso:", result.error)
-      redirect("/error")
+      console.error('Error al añadir el curso:', result.error);
+      redirect('/error');
     }
-  }
+  };
 
   return (
-    <Box sx={{ minHeight: "100vh", bgcolor: "background.default", py: 4 }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: 4 }}>
       <Container maxWidth="sm">
         <Stack spacing={4}>
           {/* Header Section */}
-          <Box sx={{ textAlign: "center", pt: 2 }}>
-            <Stack direction="row" alignItems="center" justifyContent="center" spacing={2} sx={{ mb: 2 }}>
-              <SchoolIcon sx={{ color: "primary.main", fontSize: 32 }} />
+          <Box sx={{ textAlign: 'center', pt: 2 }}>
+            <Stack
+              direction="row"
+              alignItems="center"
+              justifyContent="center"
+              spacing={2}
+              sx={{ mb: 2 }}
+            >
+              <SchoolIcon sx={{ color: 'primary.main', fontSize: 32 }} />
               <Typography
                 variant="h4"
                 component="h1"
-                sx={{ color: "text.primary", fontWeight: 600, letterSpacing: "-0.025em" }}
+                sx={{ color: 'text.primary', fontWeight: 600, letterSpacing: '-0.025em' }}
               >
                 Añadir Asignatura
               </Typography>
             </Stack>
-            <Typography variant="body1" sx={{ color: "text.secondary", maxWidth: 400, mx: "auto" }}>
+            <Typography variant="body1" sx={{ color: 'text.secondary', maxWidth: 400, mx: 'auto' }}>
               Ingresa los datos de la asignatura que deseas añadir a tu plan de estudios.
             </Typography>
           </Box>
@@ -56,25 +72,34 @@ export default function AddCoursePage() {
           {/* Form Container */}
           <Paper
             elevation={0}
-            sx={{ bgcolor: "background.paper", border: 1, borderColor: "divider", borderRadius: 3, overflow: "hidden" }}
+            sx={{
+              bgcolor: 'background.paper',
+              border: 1,
+              borderColor: 'divider',
+              borderRadius: 3,
+              overflow: 'hidden',
+            }}
           >
             <Box
               component="form"
               onSubmit={handleSubmit(onSubmit)}
-              sx={{ p: 4, display: "flex", flexDirection: "column", gap: 3 }}
+              sx={{ p: 4, display: 'flex', flexDirection: 'column', gap: 3 }}
             >
               {/* Course Name Field */}
               <Controller
                 name="course"
                 control={control}
                 rules={{
-                  required: "A name is required",
-                  minLength: { value: 2, message: "Minimum 2 characters" },
-                  maxLength: { value: 100, message: "Maximum 100 characters allowed" },
+                  required: 'A name is required',
+                  minLength: { value: 2, message: 'Minimum 2 characters' },
+                  maxLength: { value: 100, message: 'Maximum 100 characters allowed' },
                 }}
                 render={({ field }) => (
                   <FormControl fullWidth>
-                    <FormLabel htmlFor="name-add-course" sx={{ color: "text.primary", fontWeight: 500, mb: 1 }}>
+                    <FormLabel
+                      htmlFor="name-add-course"
+                      sx={{ color: 'text.primary', fontWeight: 500, mb: 1 }}
+                    >
                       Nombre de la Asignatura
                     </FormLabel>
                     <TextField
@@ -87,11 +112,11 @@ export default function AddCoursePage() {
                       error={!!errors.course}
                       helperText={errors.course?.message}
                       sx={{
-                        "& .MuiOutlinedInput-root": {
-                          bgcolor: "background.default",
-                          "&:hover": {
-                            "& .MuiOutlinedInput-notchedOutline": {
-                              borderColor: "primary.main",
+                        '& .MuiOutlinedInput-root': {
+                          bgcolor: 'background.default',
+                          '&:hover': {
+                            '& .MuiOutlinedInput-notchedOutline': {
+                              borderColor: 'primary.main',
                             },
                           },
                         },
@@ -110,7 +135,10 @@ export default function AddCoursePage() {
                 control={control}
                 render={({ field }) => (
                   <FormControl fullWidth>
-                    <FormLabel htmlFor="code-add-course" sx={{ color: "text.primary", fontWeight: 500, mb: 1 }}>
+                    <FormLabel
+                      htmlFor="code-add-course"
+                      sx={{ color: 'text.primary', fontWeight: 500, mb: 1 }}
+                    >
                       Código de la Asignatura
                     </FormLabel>
                     <TextField
@@ -120,11 +148,11 @@ export default function AddCoursePage() {
                       fullWidth
                       variant="outlined"
                       sx={{
-                        "& .MuiOutlinedInput-root": {
-                          bgcolor: "background.default",
-                          "&:hover": {
-                            "& .MuiOutlinedInput-notchedOutline": {
-                              borderColor: "primary.main",
+                        '& .MuiOutlinedInput-root': {
+                          bgcolor: 'background.default',
+                          '&:hover': {
+                            '& .MuiOutlinedInput-notchedOutline': {
+                              borderColor: 'primary.main',
                             },
                           },
                         },
@@ -143,8 +171,11 @@ export default function AddCoursePage() {
                 control={control}
                 render={({ field }) => (
                   <FormControl fullWidth>
-                    <FormLabel htmlFor="credits-add-course" sx={{ color: "text.primary", fontWeight: 500, mb: 1 }}>
-                      Creditos 
+                    <FormLabel
+                      htmlFor="credits-add-course"
+                      sx={{ color: 'text.primary', fontWeight: 500, mb: 1 }}
+                    >
+                      Creditos
                     </FormLabel>
                     <TextField
                       {...field}
@@ -154,11 +185,11 @@ export default function AddCoursePage() {
                       type="number"
                       variant="outlined"
                       sx={{
-                        "& .MuiOutlinedInput-root": {
-                          bgcolor: "background.default",
-                          "&:hover": {
-                            "& .MuiOutlinedInput-notchedOutline": {
-                              borderColor: "primary.main",
+                        '& .MuiOutlinedInput-root': {
+                          bgcolor: 'background.default',
+                          '&:hover': {
+                            '& .MuiOutlinedInput-notchedOutline': {
+                              borderColor: 'primary.main',
                             },
                           },
                         },
@@ -180,11 +211,11 @@ export default function AddCoursePage() {
                   mt: 2,
                   py: 1.5,
                   borderRadius: 2,
-                  textTransform: "none",
+                  textTransform: 'none',
                   fontWeight: 500,
-                  fontSize: "1rem",
+                  fontSize: '1rem',
                   boxShadow: 0,
-                  "&:hover": { boxShadow: 1 },
+                  '&:hover': { boxShadow: 1 },
                 }}
               >
                 Continue
@@ -199,5 +230,5 @@ export default function AddCoursePage() {
         </Stack>
       </Container>
     </Box>
-  )
+  );
 }

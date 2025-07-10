@@ -9,7 +9,7 @@ export const updateFullName = async ({
   last_name,
 }: UpdateFullNameFormData): Promise<ProfileAPIResponse> => {
   try {
-    const supabase = await createClient();    
+    const supabase = await createClient();
     // Check if a user is logged in
     const {
       data: { user },

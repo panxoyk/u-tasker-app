@@ -13,13 +13,13 @@ import {
   TextField,
   FormControl,
   FormLabel,
-  Box
+  Box,
 } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'; // <-- ¡Revisar esta importación!
-import EditOutlinedIcon from '@mui/icons-material/EditOutlined';             // <-- ¡Revisar esta importación!
-import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';             // <-- ¡Revisar esta importación!
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined'; // <-- ¡Revisar esta importación!
+import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined'; // <-- ¡Revisar esta importación!
 
 interface EvaluationDetailModalProps {
   evaluation: EvaluationData;
@@ -28,11 +28,17 @@ interface EvaluationDetailModalProps {
   courses: CourseData[];
 }
 
-export default function EvaluationDetailModal({ evaluation, isOpen, onClose, courses }: EvaluationDetailModalProps) {
+export default function EvaluationDetailModal({
+  evaluation,
+  isOpen,
+  onClose,
+  courses,
+}: EvaluationDetailModalProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
-  const courseName = courses.find(c => c.id === evaluation.course_id)?.name || 'Curso Desconocido';
+  const courseName =
+    courses.find((c) => c.id === evaluation.course_id)?.name || 'Curso Desconocido';
 
   const formatDateTimeLocal = (isoString?: string) => {
     if (!isoString) return '';
@@ -68,7 +74,9 @@ export default function EvaluationDetailModal({ evaluation, isOpen, onClose, cou
   }, [evaluation, reset]);
 
   const handleDelete = async () => {
-    if (confirm('¿Estás seguro de que quieres eliminar esta evaluación? Esta acción es irreversible.')) {
+    if (
+      confirm('¿Estás seguro de que quieres eliminar esta evaluación? Esta acción es irreversible.')
+    ) {
       setIsDeleting(true);
       const result = await deleteEvaluation(evaluation.id);
       if (result.success) {
@@ -100,7 +108,11 @@ export default function EvaluationDetailModal({ evaluation, isOpen, onClose, cou
         <Typography variant="subtitle1" color="text.secondary">
           Curso: **{courseName}**
         </Typography>
-        <Box component="form" onSubmit={handleSubmit(handleEditSubmit)} sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <Box
+          component="form"
+          onSubmit={handleSubmit(handleEditSubmit)}
+          sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 2 }}
+        >
           {isEditing ? (
             <>
               <Controller
@@ -145,10 +157,16 @@ export default function EvaluationDetailModal({ evaluation, isOpen, onClose, cou
           ) : (
             <>
               <Typography variant="body2" sx={{ mt: 1 }}>
-                **Inicio:** {evaluation.start_date ? new Date(evaluation.start_date).toLocaleString() : 'No especificado'}
+                **Inicio:**{' '}
+                {evaluation.start_date
+                  ? new Date(evaluation.start_date).toLocaleString()
+                  : 'No especificado'}
               </Typography>
               <Typography variant="body2">
-                **Fin:** {evaluation.end_date ? new Date(evaluation.end_date).toLocaleString() : 'No especificado'}
+                **Fin:**{' '}
+                {evaluation.end_date
+                  ? new Date(evaluation.end_date).toLocaleString()
+                  : 'No especificado'}
               </Typography>
             </>
           )}
