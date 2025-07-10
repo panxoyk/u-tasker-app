@@ -14,9 +14,9 @@ export default function OnBoardingPage() {
   };
 
   const steps = [
-    'Complete your personal information',
-    'Set up your first academic period',
-    'Add your first course',
+    'Completa tu información personal',
+    'Setea tu primer período académico',
+    'Agrega tu primer curso',
   ];
 
   const getStepContent = (step: number) => {

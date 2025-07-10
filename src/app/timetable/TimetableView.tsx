@@ -1,14 +1,11 @@
 'use client';
 
 import type React from 'react';
-
 import { useState } from 'react';
-import { Box, Paper } from '@mui/material';
+import { Box, Paper, Typography, Container } from '@mui/material';
 import type { ClassData } from '@/types/class';
 import DayHeader from './DayHeader';
-import DayNavigation from './DayNavigation';
 import DayView from './DayView';
-import WeekStats from './WeekStats';
 
 interface TimetableViewProps {
   classesData: {
@@ -27,14 +24,16 @@ export default function TimetableView({ classesData }: TimetableViewProps) {
     { id: 7, name: 'Domingo', short: 'DOM' },
   ];
 
+  // Helper to get today's day index, defaulting to Monday (index 0) if not found
   const getCurrentDayIndex = () => {
-    const today = new Date().getDay();
-    return daysOfWeek.findIndex((day) => day.id === today);
+    const today = new Date().getDay(); // getDay() returns 0 for Sunday, 1 for Monday...
+    // Adjust for your daysOfWeek array where Monday is id 1 (index 0)
+    const normalizedToday = today === 0 ? 7 : today; // Map Sunday (0) to 7
+    const index = daysOfWeek.findIndex((day) => day.id === normalizedToday);
+    return index >= 0 ? index : 0; // Default to Monday if today isn't in your defined list
   };
 
-  const [selectedDay, setSelectedDay] = useState(
-    getCurrentDayIndex() >= 0 ? getCurrentDayIndex() : 0,
-  );
+  const [selectedDay, setSelectedDay] = useState(getCurrentDayIndex());
 
   const handleDayChange = (event: React.SyntheticEvent, newValue: number) => {
     setSelectedDay(newValue);
@@ -52,26 +51,93 @@ export default function TimetableView({ classesData }: TimetableViewProps) {
   const currentClasses = classesData[currentDay.id] || [];
 
   return (
-    <Box sx={{ width: '100%', maxWidth: '100vw' }}>
-      <WeekStats classesData={classesData} />
+    <Box
+      sx={{
+        width: '100%',
+        maxWidth: '100vw',
+        minHeight: '100vh',
+        bgcolor: 'background.default', // Use theme background color
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
+      {/* Page Title and Description - consistent with other views */}
+      <Container maxWidth="md" sx={{ pt: 3, pb: 2, px: { xs: 2, sm: 3 } }}>
+        <Typography
+          variant="h5"
+          component="h1"
+          sx={{
+            color: 'text.primary',
+            fontWeight: 600,
+            mb: 0.5,
+            fontSize: { xs: '1.25rem', sm: '1.5rem' },
+          }}
+        >
+          Horario
+        </Typography>
+        <Typography
+          variant="body2"
+          sx={{
+            color: 'text.secondary',
+            fontSize: { xs: '0.8rem', sm: '0.875rem' },
+          }}
+        >
+          Visualiza y gestiona tus clases por día.
+        </Typography>
+      </Container>
 
-      <DayHeader
-        currentDay={currentDay}
-        classes={currentClasses}
-        onPrevDay={handlePrevDay}
-        onNextDay={handleNextDay}
-      />
+      {/* Main Content Area */}
+      <Container
+        maxWidth="md"
+        sx={{
+          flex: 1, // Allow content to grow
+          py: { xs: 2, sm: 3 },
+          px: { xs: 2, sm: 3 },
+          display: 'flex',
+          flexDirection: 'column',
+          gap: { xs: 2, sm: 3 }, // Spacing between cards/elements
+        }}
+      >
+        {/* Day Header with Navigation Buttons */}
+        <DayHeader
+          currentDay={currentDay}
+          classes={currentClasses}
+          onPrevDay={handlePrevDay}
+          onNextDay={handleNextDay}
+          sx={{
+            bgcolor: 'background.paper', // Consistent with paper elevation
+            borderRadius: 2,
+            boxShadow: 1, // Subtle shadow for depth
+            p: { xs: 2, sm: 3 },
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        />
 
-      <DayNavigation
-        selectedDay={selectedDay}
-        onDayChange={handleDayChange}
-        daysOfWeek={daysOfWeek}
-        classesData={classesData}
-      />
+        {/* Day View (Main Class List) */}
+        <Paper
+          elevation={1}
+          sx={{
+            minHeight: '400px',
+            borderRadius: 2,
+            bgcolor: 'background.paper', // Consistent with light theme paper
+            p: { xs: 2, sm: 3 }, // Add padding to the paper itself
+            flexGrow: 1, // Allow it to expand
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
+          <DayView classes={currentClasses} dayName={currentDay.name} />
+        </Paper>
 
-      <Paper elevation={1} sx={{ minHeight: '400px', borderRadius: 2 }}>
-        <DayView classes={currentClasses} dayName={currentDay.name} />
-      </Paper>
+        {/* Optional: Week Stats section */}
+        {/*
+        <Paper elevation={1} sx={{ borderRadius: 2, bgcolor: 'background.paper', p: { xs: 2, sm: 3 } }}>
+          <WeekStats classesData={classesData} />
+        </Paper>
+        */}
+      </Container>
     </Box>
   );
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Box, IconButton, AppBar, Toolbar, Typography, Button } from '@mui/material'; // Importamos AppBar y Toolbar
+import { Box, IconButton, AppBar, Toolbar, Typography, Button } from '@mui/material';
 import TasksList from '@/app/tasks/TasksList';
 import { TaskData } from '@/types/task';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
@@ -48,24 +48,27 @@ export default function TasksCarousel({
         minHeight: '100vh',
       }}
     >
-      <AppBar position="fixed" color="primary" sx={{ top: 0, bottom: 'auto' }}>
-        <Toolbar>
-          <Typography variant="h3" component="div" sx={{ flexGrow: 1 }}>
-            Tasks
-          </Typography>
-          <Link href="/tasks/add">
-            <Button variant="contained" startIcon={<AddOutlinedIcon />}>
-              Add Task
-            </Button>
-          </Link>
-        </Toolbar>
-      </AppBar>
+      <Link href="/tasks/add">
+        <Button
+          variant="contained"
+          startIcon={<AddOutlinedIcon />}
+          sx={{
+            position: 'fixed',
+            bottom: 80,
+            right: 16,
+            borderRadius: '28px',
+            padding: '10px 24px',
+            zIndex: 1100,
+          }}
+        >
+          Add Task
+        </Button>
+      </Link>
+
       <Box
         sx={{
           flexGrow: 1,
           overflowY: 'auto',
-          mt: { xs: 7, sm: 8 },
-          mb: { xs: 7, sm: 8 },
         }}
       >
         {sections.map((section, index) => (

@@ -2,7 +2,7 @@
 
 import type React from 'react';
 
-import { Box, Tabs, Tab, Typography, Paper } from '@mui/material';
+import { Box, Tabs, Tab, Typography, Paper, SxProps, Theme } from '@mui/material';
 import { ClassData } from '@/types/class';
 
 interface DayNavigationProps {
@@ -10,6 +10,7 @@ interface DayNavigationProps {
   onDayChange: (event: React.SyntheticEvent, newValue: number) => void;
   daysOfWeek: Array<{ id: number; name: string; short: string }>;
   classesData: { [key: number]: ClassData[] };
+  sx?: SxProps<Theme>;
 }
 
 export default function DayNavigation({
@@ -17,9 +18,13 @@ export default function DayNavigation({
   onDayChange,
   daysOfWeek,
   classesData,
+  sx, // Destructure sx from props
 }: DayNavigationProps) {
   return (
-    <Paper elevation={1} sx={{ mb: 2 }}>
+    // Apply the sx prop to the root Paper component
+    <Paper elevation={0} sx={{ ...sx, mb: 2 }}>
+      {' '}
+      {/* Set elevation to 0 here for more control in parent */}
       <Tabs
         value={selectedDay}
         onChange={onDayChange}
@@ -27,10 +32,9 @@ export default function DayNavigation({
         scrollButtons="auto"
         sx={{
           '& .MuiTabs-flexContainer': {
-            // Target the flex container inside Tabs
             display: 'flex',
             flexWrap: 'nowrap',
-            width: '100%', // Ensure the flex container takes full width
+            width: '100%',
           },
           '& .MuiTab-root': {
             minWidth: 'auto',
@@ -51,8 +55,11 @@ export default function DayNavigation({
                   </Typography>
                 </Box>
               }
+              value={index} // Added value prop for Tab
               sx={{
                 opacity: dayClasses.length > 0 ? 1 : 0.6,
+                // Consistent text color for tabs
+                color: selectedDay === index ? 'primary.main' : 'text.secondary',
               }}
             />
           );

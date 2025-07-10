@@ -1,6 +1,7 @@
 import { getTasksByStatus } from '@/actions/task';
 import { Container } from '@mui/material';
 import TaskCarousel from '@/app/tasks/TaskCarousel';
+import Navbar from '@/components/Navbar';
 
 export default async function TasksPage() {
   let { data: tasksPendiente = [], error: errorPendiente } = await getTasksByStatus(1);
@@ -30,6 +31,7 @@ export default async function TasksPage() {
 
   return (
     <div>
+      <Navbar />
       <Container maxWidth="sm">
         <TaskCarousel
           tasksPendiente={tasksPendiente}

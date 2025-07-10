@@ -3,7 +3,6 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
 import Divider from '@mui/material/Divider';
 import FormLabel from '@mui/material/FormLabel';
 import FormControl from '@mui/material/FormControl';
@@ -14,11 +13,11 @@ import Stack from '@mui/material/Stack';
 import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 import { Controller, useForm } from 'react-hook-form';
+import CircularProgress from '@mui/material/CircularProgress';
+import Alert from '@mui/material/Alert';
 
 import ForgotPassword from '@/components/ForgotPassword';
-import AppTheme from '@/theme/AppTheme';
 import ColorModeSelect from '@/theme/ColorModeSelect';
-import { GoogleIcon } from '@/components/CustomIcons';
 import { LogInFormData } from '@/types/auth';
 import { login } from '@/actions/auth';
 
@@ -64,11 +63,14 @@ const LogInContainer = styled(Stack)(({ theme }) => ({
 
 export default function LoginPage() {
   const [open, setOpen] = React.useState(false);
+  const [loading, setLoading] = React.useState(false); // New state for loading
+  const [error, setError] = React.useState(''); // New state for errors
 
   const {
     control,
     handleSubmit,
     formState: { errors },
+    setError: setFormError, // Function to set specific form field errors
   } = useForm<LogInFormData>({ defaultValues: { email: '', password: '' } });
 
   const handleClickOpen = () => {
@@ -77,6 +79,20 @@ export default function LoginPage() {
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const onSubmit = async (data: LogInFormData) => {
+    setLoading(true); // Set loading to true when submission starts
+    setError(''); // Clear previous errors
+    try {
+      const result = await login(data); // Assuming `login` returns a result or throws an error
+    } catch (err: any) {
+      // Handle unexpected errors (network issues, server errors, etc.)
+      console.error('Login error:', err);
+      setError(err.message || 'An unexpected error occurred during login. Please try again.');
+    } finally {
+      setLoading(false); // Set loading to false when submission finishes
+    }
   };
 
   return (
@@ -96,7 +112,7 @@ export default function LoginPage() {
           </Typography>
           <Box
             component="form"
-            onSubmit={handleSubmit(login)}
+            onSubmit={handleSubmit(onSubmit)} // Use the new onSubmit handler
             noValidate
             sx={{
               display: 'flex',
@@ -105,11 +121,18 @@ export default function LoginPage() {
               gap: 2,
             }}
           >
+            {error && ( // Display general error message if present
+              <Alert severity="error">{error}</Alert>
+            )}
             <Controller
               name="email"
               control={control}
+              rules={{
+                required: 'Email is required',
+                pattern: { value: /^\S+@\S+$/i, message: 'Invalid email address' },
+              }}
               render={({ field }) => (
-                <FormControl>
+                <FormControl error={!!errors.email}>
                   <FormLabel htmlFor="email-login">Email</FormLabel>
                   <TextField
                     {...field}
@@ -122,6 +145,7 @@ export default function LoginPage() {
                     fullWidth
                     variant="outlined"
                     color="primary"
+                    helperText={errors.email?.message}
                   />
                 </FormControl>
               )}
@@ -129,8 +153,12 @@ export default function LoginPage() {
             <Controller
               name="password"
               control={control}
+              rules={{
+                required: 'Password is required',
+                minLength: { value: 6, message: 'Password must be at least 6 characters' },
+              }}
               render={({ field }) => (
-                <FormControl>
+                <FormControl error={!!errors.password}>
                   <FormLabel htmlFor="password-login">Password</FormLabel>
                   <TextField
                     {...field}
@@ -143,13 +171,20 @@ export default function LoginPage() {
                     fullWidth
                     variant="outlined"
                     color="primary"
+                    helperText={errors.password?.message}
                   />
                 </FormControl>
               )}
             />
             <ForgotPassword open={open} handleClose={handleClose} />
-            <Button type="submit" fullWidth variant="contained">
-              Continue
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              disabled={loading} // Disable button when loading
+              startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null} // Show spinner
+            >
+              {loading ? 'Logging in...' : 'Continue'} {/* Change button text */}
             </Button>
             <Link
               component="button"
@@ -169,15 +204,6 @@ export default function LoginPage() {
               gap: 2,
             }}
           >
-            <Button
-              fullWidth
-              variant="outlined"
-              onClick={() => alert('Sign in with Google')}
-              startIcon={<GoogleIcon />}
-              disabled // Activar button al implementar auth con Google
-            >
-              Continue with Google
-            </Button>
             <Typography sx={{ textAlign: 'center' }}>
               Don&apos;t have an account?{' '}
               <Link href="/auth/signup" variant="body2" sx={{ alignSelf: 'center' }}>

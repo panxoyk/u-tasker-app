@@ -54,7 +54,7 @@ export default function CreatePeriodOnBoarding(props: CreatePeriodOnBoardingProp
             variant="h4"
             sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
           >
-            Set up your first academic period
+            Setea tu primer período académico
           </Typography>
           <Controller
             name="period"
@@ -68,13 +68,14 @@ export default function CreatePeriodOnBoarding(props: CreatePeriodOnBoardingProp
             }}
             render={({ field }) => (
               <FormControl>
-                <FormLabel htmlFor="label-create-period">Period</FormLabel>
+                <FormLabel htmlFor="label-create-period">Período</FormLabel>
                 <TextField
                   {...field}
                   id="label-create-period"
                   placeholder="2025-1"
                   autoFocus
                   fullWidth
+                  autoComplete="off"
                   variant="outlined"
                   color="primary"
                   error={!!errors.period}
@@ -89,7 +90,7 @@ export default function CreatePeriodOnBoarding(props: CreatePeriodOnBoardingProp
             )}
           />
           <Button type="submit" fullWidth variant="contained" color="primary">
-            Continue
+            Siguiente
           </Button>
           <HorizontalLinearLabelStepper steps={props.steps} activeStep={1} />
         </Box>
