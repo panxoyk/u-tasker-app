@@ -147,92 +147,35 @@ export default async function HomePage() {
       <Container
         maxWidth="md"
         sx={{
-          bgcolor: '#111111',
-          borderBottom: 1,
-          borderColor: '#333333',
-        }}
-      >
-        <Toolbar
-          sx={{
-            py: { xs: 1.5, sm: 2 },
-            px: { xs: 2, sm: 3 },
-            flexDirection: { xs: 'column', sm: 'row' },
-            gap: { xs: 2, sm: 0 },
-            alignItems: { xs: 'stretch', sm: 'center' },
-          }}
-        >
-          <Stack
-            direction="row"
-            alignItems="center"
-            spacing={{ xs: 1.5, sm: 2 }}
-            sx={{
-              flexGrow: 1,
-              justifyContent: { xs: 'center', sm: 'flex-start' },
-            }}
-          >
-            <Box sx={{ textAlign: { xs: 'center', sm: 'left' } }}>
-              <Typography
-                variant="h5"
-                component="h1"
-                sx={{
-                  color: '#ffffff',
-                  fontWeight: 600,
-                  fontSize: { xs: '1.25rem', sm: '1.5rem' },
-                }}
-              >
-                Evaluaciones
-              </Typography>
-              <Typography
-                variant="body2"
-                sx={{
-                  color: '#888888',
-                  fontSize: { xs: '0.8rem', sm: '0.875rem' },
-                }}
-              >
-                Gestiona tus evaluaciones académicas
-              </Typography>
-            </Box>
-          </Stack>
-          <Box sx={{ width: { xs: '100%', sm: 'auto' } }}>
-            {courses && courses.length > 0 && !coursesError && (
-              <Button
-                component={Link}
-                href="/calendar/add"
-                variant="contained"
-                startIcon={<AddIcon />}
-                fullWidth
-                sx={{
-                  borderRadius: 2,
-                  textTransform: 'none',
-                  fontWeight: 500,
-                  px: { xs: 2, sm: 3 },
-                  py: { xs: 1.2, sm: 1 },
-                  fontSize: { xs: '0.875rem', sm: '0.9rem' },
-                  bgcolor: '#2563eb',
-                  color: '#ffffff',
-                  boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)',
-                  '&:hover': {
-                    bgcolor: '#1d4ed8',
-                    boxShadow: '0 6px 16px rgba(37, 99, 235, 0.4)',
-                  },
-                }}
-              >
-                Añadir
-              </Button>
-            )}
-          </Box>
-        </Toolbar>
-      </AppBar>
-
-      {/* Main Content */}
-      <Container
-        maxWidth="md"
-        sx={{
           flex: 1,
           py: { xs: 2, sm: 3 },
           px: { xs: 2, sm: 3 },
         }}
       >
+        {/* Page Title and Description */}
+        <Box sx={{ mb: { xs: 3, sm: 4 }, textAlign: { xs: 'center', sm: 'left' } }}>
+          <Typography
+            variant="h5"
+            component="h1"
+            sx={{
+              color: '#333333',
+              fontWeight: 600,
+              fontSize: { xs: '1.25rem', sm: '1.5rem' },
+            }}
+          >
+            Evaluaciones
+          </Typography>
+          <Typography
+            variant="body2"
+            sx={{
+              color: '#666666',
+              fontSize: { xs: '0.8rem', sm: '0.875rem' },
+            }}
+          >
+            Gestiona tus evaluaciones académicas
+          </Typography>
+        </Box>
+
         {displayError ? (
           <Box
             sx={{
