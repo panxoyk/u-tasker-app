@@ -1,9 +1,9 @@
-'use client';
+'use client'; // ¡IMPORTANTE! Debe ser la primera línea
 
 import { useState } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import timeGridPlugin from '@fullcalendar/timegrid';
+import timeGridPlugin from '@fullcalendar/timegrid'; // Necesario para timeGridWeek/Day
 import interactionPlugin from '@fullcalendar/interaction';
 import { EvaluationData } from '@/types/evaluation';
 import { CourseData } from '@/types/course';
@@ -24,9 +24,9 @@ export default function CalendarDisplay({ evaluations, courses }: CalendarDispla
   const calendarEvents = evaluations.map((evalItem) => ({
     id: String(evalItem.id),
     title: `${evalItem.title} (${evalItem.course.name})`,
-    start: evalItem.start_date,
-    end: evalItem.end_date,
-    allDay: !evalItem.start_date && !evalItem.end_date,
+    start: evalItem.start_date, // FullCalendar espera formato ISO 8601 aquí
+    end: evalItem.end_date,     // FullCalendar espera formato ISO 8601 aquí
+    allDay: !evalItem.start_date && !evalItem.end_date, // Si no hay fechas/horas, es todo el día
     extendedProps: {
       courseId: evalItem.course_id,
       evaluationData: evalItem,
@@ -81,11 +81,12 @@ export default function CalendarDisplay({ evaluations, courses }: CalendarDispla
     <Box sx={{ mt: 2 }}>
       <FullCalendar
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-        initialView="dayGridMonth"
+        // *** ESTOS SON LOS CAMBIOS CLAVE PARA MOSTRAR POR DÍA Y HORA ***
+        initialView="timeGridWeek" // Puedes cambiar a "timeGridDay" si prefieres solo un día
         headerToolbar={{
           left: 'prev,next today',
           center: 'title',
-          right: 'dayGridMonth,timeGridWeek,timeGridDay',
+          right: 'dayGridMonth,timeGridWeek,timeGridDay', // Opciones de vista para el usuario
         }}
         events={calendarEvents}
         eventClick={handleEventClick}
@@ -93,6 +94,17 @@ export default function CalendarDisplay({ evaluations, courses }: CalendarDispla
         eventDrop={handleEventDrop}
         locale="es"
         height="auto"
+        // *** NUEVO: Formato de hora para los eventos en la vista de agenda ***
+        eventTimeFormat={{
+          hour: 'numeric',
+          minute: '2-digit',
+          meridiem: false, // O 'short'/'narrow' si quieres AM/PM
+          hour12: false, // Formato 24 horas
+        }}
+        // Opcional: Rango de horas a mostrar en la vista de agenda
+        slotMinTime="07:00:00" // Empieza a mostrar desde las 7 AM
+        slotMaxTime="22:00:00" // Termina de mostrar a las 10 PM
+        allDaySlot={false} // Oculta la sección de eventos de todo el día si no la necesitas
       />
 
       {selectedEvaluation && (

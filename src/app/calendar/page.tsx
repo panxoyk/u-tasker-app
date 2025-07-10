@@ -1,50 +1,32 @@
-import { CalendarDisplay } from "@/components/calendar-display"
-import { Button } from "@/components/ui/button"
-import { Plus } from "lucide-react"
+import { getEvaluationsByCourse } from "@/actions/evaluation"
+import { getAllCoursesFromActivePeriod } from "@/actions/course"
+import {
+  Container,
+  Box,
+  Typography,
+  AppBar,
+  Toolbar,
+  Button,
+  Paper,
+  Stack,
+  Chip,
+  Card,
+  CardContent,
+  Divider,
+} from "@mui/material"
 import Link from "next/link"
-
-// Mock functions - replace with your actual server actions
-async function getAllCoursesFromActivePeriod() {
-  return {
-    data: [
-      { id: 1, name: "Mathematics", code: "MATH101" },
-      { id: 2, name: "Physics", code: "PHYS201" },
-      { id: 3, name: "Chemistry", code: "CHEM301" },
-    ],
-    error: null,
-  }
-}
-
-async function getEvaluationsByCourse(courseId: number) {
-  const mockEvaluations = [
-    {
-      id: 1,
-      title: "Final Exam",
-      course_id: 1,
-      course: { id: 1, name: "Mathematics", code: "MATH101" },
-      start_date: "2024-01-15T09:00:00",
-      end_date: "2024-01-15T11:00:00",
-    },
-    {
-      id: 2,
-      title: "Midterm Test",
-      course_id: 2,
-      course: { id: 2, name: "Physics", code: "PHYS201" },
-      start_date: "2024-01-20T14:00:00",
-      end_date: "2024-01-20T16:00:00",
-    },
-  ]
-
-  return {
-    success: true,
-    data: mockEvaluations.filter((e) => e.course_id === courseId),
-  }
-}
+import AddIcon from "@mui/icons-material/Add"
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday"
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline"
+import SchoolIcon from "@mui/icons-material/School"
+import EventIcon from "@mui/icons-material/Event"
+import CircleIcon from "@mui/icons-material/Circle"
+import AccessTimeIcon from "@mui/icons-material/AccessTime"
+import type { EvaluationData } from "@/types/evaluation"
 
 export default async function HomePage() {
   const { data: courses, error: coursesError } = await getAllCoursesFromActivePeriod()
-
-  let allEvaluations: any[] = []
+  let allEvaluations: EvaluationData[] = []
   let displayError: string | null = null
 
   if (coursesError) {
@@ -54,10 +36,8 @@ export default async function HomePage() {
     displayError = "No hay cursos activos disponibles para gestionar evaluaciones. Por favor, añade un curso primero."
   } else {
     const evaluationPromises = courses.map((course) => getEvaluationsByCourse(course.id))
-
     try {
       const results = await Promise.all(evaluationPromises)
-
       allEvaluations = results.flatMap((result) => {
         if (result.success && result.data) {
           return result.data
@@ -66,7 +46,6 @@ export default async function HomePage() {
           return []
         }
       })
-
       if (allEvaluations.length === 0 && !displayError) {
         displayError = "No hay evaluaciones programadas para tus cursos activos."
       }
@@ -76,33 +55,413 @@ export default async function HomePage() {
     }
   }
 
-  return (
-    <div className="min-h-screen flex flex-col">
-      <header className="fixed top-0 left-0 right-0 z-50 bg-primary text-primary-foreground shadow-md">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <h1 className="text-2xl md:text-3xl font-bold">Calendario de Evaluaciones</h1>
-            {courses && courses.length > 0 && !coursesError && (
-              <Button asChild variant="secondary">
-                <Link href="/calendar/add">
-                  <Plus className="mr-2 h-4 w-4" />
-                  Añadir Evaluación
-                </Link>
-              </Button>
-            )}
-          </div>
-        </div>
-      </header>
+  // Sort evaluations by start_date
+  const sortedEvaluations = allEvaluations.sort((a, b) => {
+    const dateA = new Date(a.start_date || "")
+    const dateB = new Date(b.start_date || "")
+    return dateA.getTime() - dateB.getTime()
+  })
 
-      <main className="flex-1 container mx-auto px-4 pt-20 pb-8">
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return "Sin fecha"
+    const date = new Date(dateString)
+    const today = new Date()
+    const tomorrow = new Date(today)
+    tomorrow.setDate(tomorrow.getDate() + 1)
+
+    if (date.toDateString() === today.toDateString()) {
+      return "Hoy"
+    } else if (date.toDateString() === tomorrow.toDateString()) {
+      return "Mañana"
+    } else {
+      return date.toLocaleDateString("es-ES", {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+      })
+    }
+  }
+
+  const formatFullDate = (dateString?: string) => {
+    if (!dateString) return "Fecha no especificada"
+    const date = new Date(dateString)
+    return date.toLocaleDateString("es-ES", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    })
+  }
+
+  const formatTime = (dateString?: string) => {
+    if (!dateString) return null
+    const date = new Date(dateString)
+    return date.toLocaleTimeString("es-ES", {
+      hour: "2-digit",
+      minute: "2-digit",
+    })
+  }
+
+  const formatDateRange = (startDate?: string, endDate?: string) => {
+    if (!startDate && !endDate) return "Sin fechas"
+    if (startDate && !endDate) return `Desde ${formatFullDate(startDate)}`
+    if (!startDate && endDate) return `Hasta ${formatFullDate(endDate)}`
+
+    const start = new Date(startDate!)
+    const end = new Date(endDate!)
+
+    if (start.toDateString() === end.toDateString()) {
+      return `${formatFullDate(startDate)} (${formatTime(startDate)} - ${formatTime(endDate)})`
+    }
+
+    return `${formatFullDate(startDate)} - ${formatFullDate(endDate)}`
+  }
+
+  const isUpcoming = (startDate?: string) => {
+    if (!startDate) return false
+    const now = new Date()
+    const evalDate = new Date(startDate)
+    const timeDiff = evalDate.getTime() - now.getTime()
+    const hoursDiff = timeDiff / (1000 * 3600)
+    return hoursDiff <= 24 && hoursDiff > 0
+  }
+
+  const isActive = (startDate?: string, endDate?: string) => {
+    const now = new Date()
+    const start = startDate ? new Date(startDate) : null
+    const end = endDate ? new Date(endDate) : null
+
+    if (start && end) {
+      return now >= start && now <= end
+    }
+    if (start) {
+      return now >= start
+    }
+    return false
+  }
+
+  return (
+    <Box sx={{ minHeight: "100vh", bgcolor: "#0a0a0a", display: "flex", flexDirection: "column" }}>
+      {/* Header */}
+      <AppBar
+        position="static"
+        elevation={0}
+        sx={{
+          bgcolor: "#111111",
+          borderBottom: 1,
+          borderColor: "#333333",
+        }}
+      >
+        <Toolbar
+          sx={{
+            py: { xs: 1.5, sm: 2 },
+            px: { xs: 2, sm: 3 },
+            flexDirection: { xs: "column", sm: "row" },
+            gap: { xs: 2, sm: 0 },
+            alignItems: { xs: "stretch", sm: "center" },
+          }}
+        >
+          <Stack
+            direction="row"
+            alignItems="center"
+            spacing={{ xs: 1.5, sm: 2 }}
+            sx={{
+              flexGrow: 1,
+              justifyContent: { xs: "center", sm: "flex-start" },
+            }}
+          >
+            <Box sx={{ textAlign: { xs: "center", sm: "left" } }}>
+              <Typography
+                variant="h5"
+                component="h1"
+                sx={{
+                  color: "#ffffff",
+                  fontWeight: 600,
+                  fontSize: { xs: "1.25rem", sm: "1.5rem" },
+                }}
+              >
+                Evaluaciones
+              </Typography>
+              <Typography
+                variant="body2"
+                sx={{
+                  color: "#888888",
+                  fontSize: { xs: "0.8rem", sm: "0.875rem" },
+                }}
+              >
+                Gestiona tus evaluaciones académicas
+              </Typography>
+            </Box>
+          </Stack>
+          {courses && courses.length > 0 && !coursesError && (
+            <Button
+              component={Link}
+              href="/calendar/add"
+              variant="contained"
+              startIcon={<AddIcon />}
+              fullWidth={{ xs: true, sm: false }}
+              sx={{
+                borderRadius: 2,
+                textTransform: "none",
+                fontWeight: 500,
+                px: { xs: 2, sm: 3 },
+                py: { xs: 1.2, sm: 1 },
+                fontSize: { xs: "0.875rem", sm: "0.9rem" },
+                bgcolor: "#2563eb",
+                color: "#ffffff",
+                boxShadow: "0 4px 12px rgba(37, 99, 235, 0.3)",
+                "&:hover": {
+                  bgcolor: "#1d4ed8",
+                  boxShadow: "0 6px 16px rgba(37, 99, 235, 0.4)",
+                },
+              }}
+            >
+              Añadir
+            </Button>
+          )}
+        </Toolbar>
+      </AppBar>
+
+      {/* Main Content */}
+      <Container
+        maxWidth="md"
+        sx={{
+          flex: 1,
+          py: { xs: 2, sm: 3 },
+          px: { xs: 2, sm: 3 },
+        }}
+      >
         {displayError ? (
-          <div className="mt-8 text-center">
-            <p className="text-destructive text-lg">{displayError}</p>
-          </div>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              minHeight: "60vh",
+            }}
+          >
+            <Paper
+              elevation={0}
+              sx={{
+                p: { xs: 3, sm: 4 },
+                textAlign: "center",
+                maxWidth: 400,
+                bgcolor: "#111111",
+                borderRadius: 2,
+                border: 1,
+                borderColor: "#333333",
+              }}
+            >
+              <ErrorOutlineIcon sx={{ fontSize: 40, color: "#666666", mb: 2 }} />
+              <Typography variant="h6" gutterBottom sx={{ fontWeight: 500, color: "#ffffff" }}>
+                Sin evaluaciones
+              </Typography>
+              <Typography variant="body2" sx={{ color: "#888888", lineHeight: 1.6 }}>
+                {displayError}
+              </Typography>
+            </Paper>
+          </Box>
         ) : (
-          <CalendarDisplay evaluations={allEvaluations} courses={courses || []} />
+          <Stack spacing={{ xs: 3, sm: 4 }}>
+            {/* Summary */}
+            <Box sx={{ textAlign: "center" }}>
+              <Stack direction="row" spacing={2} justifyContent="center" flexWrap="wrap" sx={{ gap: 1 }}>
+                <Chip
+                  label={`${allEvaluations.length} evaluaciones`}
+                  variant="outlined"
+                  size="small"
+                  sx={{
+                    fontSize: { xs: "0.75rem", sm: "0.8rem" },
+                    color: "#ffffff",
+                    borderColor: "#333333",
+                    bgcolor: "#1a1a1a",
+                  }}
+                />
+                <Chip
+                  label={`${courses?.length || 0} cursos`}
+                  variant="outlined"
+                  size="small"
+                  sx={{
+                    fontSize: { xs: "0.75rem", sm: "0.8rem" },
+                    color: "#ffffff",
+                    borderColor: "#333333",
+                    bgcolor: "#1a1a1a",
+                  }}
+                />
+                {sortedEvaluations.filter((e) => isUpcoming(e.start_date)).length > 0 && (
+                  <Chip
+                    label={`${sortedEvaluations.filter((e) => isUpcoming(e.start_date)).length} próximas`}
+                    size="small"
+                    sx={{
+                      bgcolor: "#2563eb",
+                      color: "#ffffff",
+                      fontSize: { xs: "0.75rem", sm: "0.8rem" },
+                    }}
+                  />
+                )}
+              </Stack>
+            </Box>
+
+            {/* Evaluations List */}
+            {sortedEvaluations.length === 0 ? (
+              <Paper
+                elevation={0}
+                sx={{
+                  p: { xs: 4, sm: 6 },
+                  textAlign: "center",
+                  bgcolor: "#111111",
+                  borderRadius: 2,
+                  border: 1,
+                  borderColor: "#333333",
+                }}
+              >
+                <CalendarTodayIcon sx={{ fontSize: 48, color: "#444444", mb: 2 }} />
+                <Typography variant="h6" sx={{ color: "#ffffff", mb: 1, fontWeight: 500 }}>
+                  Sin evaluaciones
+                </Typography>
+                <Typography variant="body2" sx={{ color: "#888888" }}>
+                  Añade tu primera evaluación para comenzar
+                </Typography>
+              </Paper>
+            ) : (
+              <Stack spacing={{ xs: 2, sm: 3 }}>
+                {sortedEvaluations.map((evaluation: EvaluationData) => (
+                  <Card
+                    key={evaluation.id}
+                    elevation={0}
+                    sx={{
+                      borderRadius: 2,
+                      border: 1,
+                      borderColor: "#333333",
+                      bgcolor: "#111111",
+                      "&:hover": {
+                        borderColor: "#2563eb",
+                        boxShadow: "0 4px 20px rgba(37, 99, 235, 0.1)",
+                      },
+                      transition: "all 0.2s ease",
+                    }}
+                  >
+                    <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
+                      <Stack spacing={{ xs: 2, sm: 3 }}>
+                        {/* Header */}
+                        <Box
+                          sx={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 2 }}
+                        >
+                          <Box sx={{ flex: 1 }}>
+                            <Typography
+                              variant="h6"
+                              sx={{
+                                fontWeight: 600,
+                                color: "#ffffff",
+                                fontSize: { xs: "1.1rem", sm: "1.25rem" },
+                                mb: 0.5,
+                              }}
+                            >
+                              {evaluation.title}
+                            </Typography>
+                            <Stack direction="row" alignItems="center" spacing={1}>
+                              <SchoolIcon sx={{ fontSize: 16, color: "#2563eb" }} />
+                              <Typography
+                                variant="body2"
+                                sx={{
+                                  color: "#cccccc",
+                                  fontSize: { xs: "0.85rem", sm: "0.9rem" },
+                                }}
+                              >
+                                {evaluation.course.name}
+                              </Typography>
+                            </Stack>
+                          </Box>
+
+                          <Stack direction="row" spacing={1}>
+                            {isActive(evaluation.start_date, evaluation.end_date) && (
+                              <Chip
+                                icon={<CircleIcon sx={{ fontSize: "12px !important", color: "#10b981" }} />}
+                                label="Activa"
+                                size="small"
+                                sx={{
+                                  bgcolor: "rgba(16, 185, 129, 0.1)",
+                                  color: "#10b981",
+                                  fontSize: "0.75rem",
+                                  height: 24,
+                                  border: 1,
+                                  borderColor: "rgba(16, 185, 129, 0.3)",
+                                }}
+                              />
+                            )}
+                            {isUpcoming(evaluation.start_date) && (
+                              <Chip
+                                label="Próxima"
+                                size="small"
+                                sx={{
+                                  bgcolor: "rgba(37, 99, 235, 0.1)",
+                                  color: "#2563eb",
+                                  fontSize: "0.75rem",
+                                  height: 24,
+                                  border: 1,
+                                  borderColor: "rgba(37, 99, 235, 0.3)",
+                                }}
+                              />
+                            )}
+                          </Stack>
+                        </Box>
+
+                        <Divider sx={{ borderColor: "#333333" }} />
+
+                        {/* Date and Time Info */}
+                        <Stack spacing={2}>
+                          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                            <EventIcon sx={{ fontSize: 20, color: "#2563eb" }} />
+                            <Box>
+                              <Typography
+                                variant="body1"
+                                sx={{
+                                  fontWeight: 500,
+                                  color: "#ffffff",
+                                  fontSize: { xs: "0.9rem", sm: "1rem" },
+                                }}
+                              >
+                                {formatDate(evaluation.start_date)}
+                              </Typography>
+                              <Typography
+                                variant="body2"
+                                sx={{
+                                  color: "#888888",
+                                  fontSize: { xs: "0.8rem", sm: "0.85rem" },
+                                }}
+                              >
+                                {formatDateRange(evaluation.start_date, evaluation.end_date)}
+                              </Typography>
+                            </Box>
+                          </Box>
+
+                          {formatTime(evaluation.start_date) && (
+                            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                              <AccessTimeIcon sx={{ fontSize: 20, color: "#2563eb" }} />
+                              <Typography
+                                variant="body2"
+                                sx={{
+                                  color: "#cccccc",
+                                  fontSize: { xs: "0.85rem", sm: "0.9rem" },
+                                }}
+                              >
+                                {formatTime(evaluation.start_date)}
+                                {evaluation.end_date &&
+                                  evaluation.start_date !== evaluation.end_date &&
+                                  ` - ${formatTime(evaluation.end_date)}`}
+                              </Typography>
+                            </Box>
+                          )}
+                        </Stack>
+                      </Stack>
+                    </CardContent>
+                  </Card>
+                ))}
+              </Stack>
+            )}
+          </Stack>
         )}
-      </main>
-    </div>
+      </Container>
+    </Box>
   )
 }
