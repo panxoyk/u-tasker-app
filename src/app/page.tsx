@@ -1,14 +1,14 @@
 import {
-  getTasksbyStatus from,
-} from '@/actions/task'; // Asume que tus Server Actions están en esta ruta
+  getTasksByStatus }
+  from '@/actions/task'; 
 import HomePage from './HomePage'; // Asegúrate de que la ruta sea correcta
 
 export default async function Page() {
   // Llama a las Server Actions directamente
-  const { data: tasksPendiente = [], error: errorPendiente } = await getTasksPendiente();
-  const { data: tasksEnProceso = [], error: errorEnProceso } = await getTasksEnProceso();
-  const { data: tasksEntregada = [], error: errorEntregada } = await getTasksEntregada();
-  const { data: tasksVencida = [], error: errorVencida } = await getTasksVencida();
+  const { data: tasksPendiente = [], error: errorPendiente } = await getTasksByStatus(1);
+  const { data: tasksEnProceso = [], error: errorEnProceso } = await getTasksByStatus(2);
+  const { data: tasksEntregada = [], error: errorEntregada } = await getTasksByStatus(3);
+  const { data: tasksVencida = [], error: errorVencida } = await getTasksByStatus(4);
 
   // Puedes manejar los errores de forma más sofisticada,
   // por ahora, solo logueamos y mostramos un mensaje simple.
