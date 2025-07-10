@@ -28,6 +28,14 @@ export const formatDate = (isoString: string | null | undefined): string => {
   }
 };
 
+export const formatTime = (time: string) => {
+  return new Date(`1970-01-01T${time}`).toLocaleTimeString('es-ES', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  });
+};
+
 export const convertTimeToTimez = (timeString: string): string => {
   // Obtener la fecha actual. Necesitamos una fecha completa para construir un objeto Date válido.
   // La parte de la fecha no importa para la hora con zona horaria, pero es necesaria para el constructor de Date.
@@ -83,4 +91,12 @@ export const convertDateTimeToTimestampz = (dateTimeString?: string): string => 
     console.error(`Error converting date string "${dateTimeString}" to ISOString:`, error);
     return ''; // Devolver cadena vacía en caso de error
   }
+};
+
+export const cleanTimeFormat = (timeString: string) => {
+  if (!timeString) return ''; // Manejar null/undefined/vacío
+  // Divide por el signo '+' o un espacio si incluye fecha y hora, y toma solo la parte de la hora.
+  const parts = timeString.split('+');
+  return parts[0].trim().substring(0, 8); // Asegura HH:mm:ss (los primeros 8 caracteres)
+  // O substring(0, 5) si solo quieres HH:mm
 };
