@@ -196,7 +196,7 @@ export default async function HomePage() {
               </Typography>
             </Box>
           </Stack>
-          <Box sx={{ width: { xs: '100%', sm: 'auto' } }}>            
+          <Box sx={{ width: { xs: '100%', sm: 'auto' } }}>
             {courses && courses.length > 0 && !coursesError && (
               <Button
                 component={Link}

@@ -89,7 +89,6 @@ export default function LoginPage() {
     setError(''); // Clear previous errors
     try {
       const result = await login(data); // Assuming `login` returns a result or throws an error
-
     } catch (err: any) {
       // Handle unexpected errors (network issues, server errors, etc.)
       console.error('Login error:', err);
@@ -131,7 +130,10 @@ export default function LoginPage() {
             <Controller
               name="email"
               control={control}
-              rules={{ required: 'Email is required', pattern: { value: /^\S+@\S+$/i, message: 'Invalid email address' } }}
+              rules={{
+                required: 'Email is required',
+                pattern: { value: /^\S+@\S+$/i, message: 'Invalid email address' },
+              }}
               render={({ field }) => (
                 <FormControl error={!!errors.email}>
                   <FormLabel htmlFor="email-login">Email</FormLabel>
@@ -154,7 +156,10 @@ export default function LoginPage() {
             <Controller
               name="password"
               control={control}
-              rules={{ required: 'Password is required', minLength: { value: 6, message: 'Password must be at least 6 characters' } }}
+              rules={{
+                required: 'Password is required',
+                minLength: { value: 6, message: 'Password must be at least 6 characters' },
+              }}
               render={({ field }) => (
                 <FormControl error={!!errors.password}>
                   <FormLabel htmlFor="password-login">Password</FormLabel>

@@ -1,8 +1,13 @@
-"use client";
+'use client';
 
 import { useState, useCallback, useMemo } from 'react';
 import { TaskData } from '@/types/task';
-import { getTasksPendiente, getTasksEnProceso, getTasksEntregada, getTasksVencida } from '@/actions/task';
+import {
+  getTasksPendiente,
+  getTasksEnProceso,
+  getTasksEntregada,
+  getTasksVencida,
+} from '@/actions/task';
 
 // Define una interfaz para el estado de las tareas
 interface TasksState {
@@ -23,21 +28,15 @@ export function useTasks(initialTasks: TasksState) {
     setLoading(true);
     setError(null);
     try {
-      const [
-        pendientesResult,
-        enProcesoResult,
-        entregadaResult,
-        vencidaResult
-      ] = await Promise.all([
-        getTasksPendiente(),
-        getTasksEnProceso(),
-        getTasksEntregada(),
-        getTasksVencida(),
-      ]);
+      const [pendientesResult, enProcesoResult, entregadaResult, vencidaResult] = await Promise.all(
+        [getTasksPendiente(), getTasksEnProceso(), getTasksEntregada(), getTasksVencida()],
+      );
 
-      const firstError = [pendientesResult, enProcesoResult, entregadaResult, vencidaResult].find(r => r.error)?.error;
+      const firstError = [pendientesResult, enProcesoResult, entregadaResult, vencidaResult].find(
+        (r) => r.error,
+      )?.error;
       if (firstError) {
-        throw new Error(firstError || "Error al actualizar las tareas.");
+        throw new Error(firstError || 'Error al actualizar las tareas.');
       }
 
       setTasks({
@@ -48,8 +47,8 @@ export function useTasks(initialTasks: TasksState) {
       });
       return true;
     } catch (err: any) {
-      console.error("Error al re-cargar las tareas:", err);
-      setError(err.message || "No se pudieron re-cargar las tareas.");
+      console.error('Error al re-cargar las tareas:', err);
+      setError(err.message || 'No se pudieron re-cargar las tareas.');
       return false;
     } finally {
       setLoading(false);

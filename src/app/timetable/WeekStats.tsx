@@ -2,7 +2,7 @@
 
 import type { ClassData } from '@/types/class';
 import { cleanTimeFormat } from '@/utils/lib';
-import { Box, Paper, Typography, Chip, Button, Stack } from '@mui/material';
+import { Box, Paper, Typography, Chip, Button, Stack, Divider } from '@mui/material';
 import Link from 'next/link';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import WatchLaterOutlinedIcon from '@mui/icons-material/WatchLaterOutlined';
@@ -111,22 +111,24 @@ export default function WeekStats({ classesData }: WeekStatsProps) {
             />
           );
         })}
-      </Box><Stack sx={{ mt: 2 }} direction={"row"} spacing={2}>
+      </Box>
+      <Stack sx={{ mt: 2 }} spacing={2}>        
         <Box sx={{ flexGrow: 1 }}>
-  <Link href={'/timetable/add-class'} >
-    <Button fullWidth variant="outlined" startIcon={<AddOutlinedIcon />}>
-      Añadir clase
-    </Button>
-  </Link>
+          <Link href={'/timetable'}>
+            <Button fullWidth variant="outlined" startIcon={<WatchLaterOutlinedIcon />}>
+              Ver Horario de Clases
+            </Button>
+          </Link>
         </Box>
-  <Box sx={{ flexGrow: 1 }}>
-  <Link href={'/timetable'} >
-    <Button fullWidth variant="outlined" startIcon={<WatchLaterOutlinedIcon />}>
-      Ver Horario de Clases
-    </Button>
-  </Link>
-  </Box>
-</Stack>
+        <Divider />
+        <Box sx={{ flexGrow: 1 }}>
+          <Link href={'/timetable/add-class'}>
+            <Button fullWidth variant="outlined" startIcon={<AddOutlinedIcon />}>
+              Añadir clase
+            </Button>
+          </Link>
+        </Box>
+      </Stack>
     </Paper>
   );
 }

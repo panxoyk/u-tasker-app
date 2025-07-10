@@ -1,7 +1,7 @@
-import Navbar from "@/components/Navbar";
-import WeekStats from "./timetable/WeekStats";
-import { getClassesByDayOfTheWeek } from "@/actions/class";
-import { Box, Container, Stack, Typography } from "@mui/material";
+import Navbar from '@/components/Navbar';
+import WeekStats from './timetable/WeekStats';
+import { getClassesByDayOfTheWeek } from '@/actions/class';
+import { Box, Container, Stack, Typography } from '@mui/material';
 
 export default async function Page() {
   const daysOfWeek = [1, 2, 3, 4, 5, 6, 7];
@@ -17,15 +17,15 @@ export default async function Page() {
   });
 
   return (
-  <div>
-    <Navbar />
-    <Container maxWidth="sm">
-      <Stack spacing={2}>
-        <Box sx={{ mt: 8 }}>
-          <WeekStats classesData={classesData} /> 
-        </Box>       
-      </Stack>
-    </Container>
-  </div>
+    <div>
+      <Navbar />
+      <Container maxWidth="sm">
+        <Stack spacing={2}>
+          <Box sx={{ mt: 8 }}>
+            <WeekStats classesData={classesData} />
+          </Box>
+        </Stack>
+      </Container>
+    </div>
   );
 }

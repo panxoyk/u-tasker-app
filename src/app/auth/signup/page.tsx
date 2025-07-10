@@ -121,7 +121,10 @@ export default function SignUpPage() {
             <Controller
               name="email"
               control={control}
-              rules={{ required: 'Email is required', pattern: { value: /^\S+@\S+$/i, message: 'Invalid email address' } }}
+              rules={{
+                required: 'Email is required',
+                pattern: { value: /^\S+@\S+$/i, message: 'Invalid email address' },
+              }}
               render={({ field }) => (
                 <FormControl error={!!errors.email}>
                   <FormLabel htmlFor="email-signup">Email</FormLabel>
@@ -143,7 +146,10 @@ export default function SignUpPage() {
             <Controller
               name="password"
               control={control}
-              rules={{ required: 'Password is required', minLength: { value: 6, message: 'Password must be at least 6 characters' } }}
+              rules={{
+                required: 'Password is required',
+                minLength: { value: 6, message: 'Password must be at least 6 characters' },
+              }}
               render={({ field }) => (
                 <FormControl error={!!errors.password}>
                   <FormLabel htmlFor="password-signup">Password</FormLabel>

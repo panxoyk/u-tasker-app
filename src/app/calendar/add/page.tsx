@@ -96,7 +96,7 @@ export default async function AddEvaluationPage() {
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
-      <Navbar activePath="/calendar"/>
+      <Navbar activePath="/calendar" />
       <Container maxWidth="sm">
         <Stack spacing={4}>
           <Box sx={{ textAlign: 'center', pt: 2 }}>
