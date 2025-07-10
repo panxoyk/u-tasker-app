@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Box, IconButton, AppBar, Toolbar, Typography, Button } from '@mui/material'; // Importamos AppBar y Toolbar
+import { Box, IconButton, AppBar, Toolbar, Typography, Button } from '@mui/material';
 import TasksList from '@/app/tasks/TasksList';
 import { TaskData } from '@/types/task';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';

@@ -1,6 +1,6 @@
 // app/tareas/add/page.jsx (o donde sea que esté tu AddTaskPage)
 import { getAllCoursesFromActivePeriod } from '@/actions/course';
-import { AppBar, Box, Container, Toolbar, Typography } from '@mui/material';
+import { Box, Container } from '@mui/material';
 import AddTaskForm from './AddTaskForm';
 import Navbar from '@/components/Navbar';
 

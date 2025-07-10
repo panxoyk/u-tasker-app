@@ -1,4 +1,3 @@
-// components/Navbar.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -7,9 +6,8 @@ import Link from 'next/link';
 import { AppBar, Toolbar, Typography, Box, IconButton, Tooltip } from '@mui/material';
 import { CalendarMonth, Schedule, Assignment, AccountCircle, Home } from '@mui/icons-material';
 
-// Define la interfaz para las props de Navbar
 interface NavbarProps {
-  activePath?: string; // Ahora activePath puede ser un string o undefined
+  activePath?: string;
 }
 
 const navigationItems = [

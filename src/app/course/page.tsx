@@ -220,11 +220,6 @@ export default function AddCoursePage() {
               >
                 Continue
               </Button>
-
-              {/* Stepper */}
-              <Box sx={{ mt: 3 }}>
-                <HorizontalLinearLabelStepper steps={onboardingSteps} activeStep={1} />
-              </Box>
             </Box>
           </Paper>
         </Stack>

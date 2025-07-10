@@ -1,9 +1,11 @@
 import Navbar from '@/components/Navbar';
 import WeekStats from './timetable/WeekStats';
 import { getClassesByDayOfTheWeek } from '@/actions/class';
-import { Box, Container, Stack, Typography } from '@mui/material';
+import { Box, Container, Stack } from '@mui/material';
 import TaskStats from './tasks/TaskStats';
 import { getTasksByStatus } from '@/actions/task';
+import { getAllCoursesFromActivePeriod } from '@/actions/course';
+import CoursesInfo from '@/components/CoursesInfo';
 
 export default async function Page() {
   const daysOfWeek = [1, 2, 3, 4, 5, 6, 7];
@@ -17,7 +19,7 @@ export default async function Page() {
     const result = classesResults[index];
     classesData[day] = result.success ? result.data || [] : [];
   });
-    
+
   let { data: tasksPendiente = [] } = await getTasksByStatus(1);
   let { data: tasksEnProceso = [] } = await getTasksByStatus(2);
   let { data: tasksEntregada = [] } = await getTasksByStatus(3);
@@ -25,11 +27,17 @@ export default async function Page() {
 
   const allTasks = tasksPendiente.concat(tasksEnProceso, tasksEntregada, tasksVencida);
 
+  const coursesResult = await getAllCoursesFromActivePeriod();
+  const coursesData = coursesResult.success ? coursesResult.data || [] : [];
+
   return (
     <div>
       <Navbar />
       <Container maxWidth="sm">
         <Stack spacing={2}>
+          <Box>
+            <CoursesInfo coursesData={coursesData} />
+          </Box>
           <Box>
             <WeekStats classesData={classesData} />
           </Box>

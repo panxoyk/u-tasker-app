@@ -64,7 +64,7 @@ export default function WeekStats({ classesData }: WeekStatsProps) {
   };
 
   return (
-    <Paper elevation={1} sx={{ p: 2, mb: 2, mt: 4 }}>
+    <Paper elevation={1} sx={{ p: 2, mb: 2 }}>
       <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 600, textAlign: 'center' }}>
         Resumen Semanal de Clases
       </Typography>
@@ -112,7 +112,7 @@ export default function WeekStats({ classesData }: WeekStatsProps) {
           );
         })}
       </Box>
-      <Stack sx={{ mt: 2 }} spacing={2}>        
+      <Stack sx={{ mt: 2 }} spacing={2}>
         <Box sx={{ flexGrow: 1 }}>
           <Link href={'/timetable'}>
             <Button fullWidth variant="outlined" startIcon={<WatchLaterOutlinedIcon />}>

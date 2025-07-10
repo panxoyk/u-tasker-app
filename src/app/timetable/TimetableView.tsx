@@ -2,12 +2,10 @@
 
 import type React from 'react';
 import { useState } from 'react';
-import { Box, Paper, Typography, Container } from '@mui/material'; // Added Container for better overall layout
+import { Box, Paper, Typography, Container } from '@mui/material';
 import type { ClassData } from '@/types/class';
-import DayHeader from './DayHeader'; // Assuming this component exists and handles day title/navigation
-import DayNavigation from './DayNavigation'; // Assuming this component exists and handles day tabs
-import DayView from './DayView'; // Assuming this component exists and displays class details
-// import WeekStats from './WeekStats'; // Uncomment and integrate if you plan to use it
+import DayHeader from './DayHeader';
+import DayView from './DayView';
 
 interface TimetableViewProps {
   classesData: {
@@ -35,9 +33,7 @@ export default function TimetableView({ classesData }: TimetableViewProps) {
     return index >= 0 ? index : 0; // Default to Monday if today isn't in your defined list
   };
 
-  const [selectedDay, setSelectedDay] = useState(
-    getCurrentDayIndex(),
-  );
+  const [selectedDay, setSelectedDay] = useState(getCurrentDayIndex());
 
   const handleDayChange = (event: React.SyntheticEvent, newValue: number) => {
     setSelectedDay(newValue);
@@ -90,20 +86,6 @@ export default function TimetableView({ classesData }: TimetableViewProps) {
         </Typography>
       </Container>
 
-      {/* Day Navigation Tabs */}
-      <DayNavigation
-        selectedDay={selectedDay}
-        onDayChange={handleDayChange}
-        daysOfWeek={daysOfWeek}
-        classesData={classesData} // Pass classesData for potential styling based on content
-        sx={{
-          bgcolor: 'background.paper', // Slightly distinct background for the tabs
-          borderBottom: 1,
-          borderColor: 'divider', // Subtle border
-          boxShadow: 0, // No shadow for tabs bar
-        }}
-      />
-
       {/* Main Content Area */}
       <Container
         maxWidth="md"
@@ -134,15 +116,18 @@ export default function TimetableView({ classesData }: TimetableViewProps) {
         />
 
         {/* Day View (Main Class List) */}
-        <Paper elevation={1} sx={{
-          minHeight: '400px',
-          borderRadius: 2,
-          bgcolor: 'background.paper', // Consistent with light theme paper
-          p: { xs: 2, sm: 3 }, // Add padding to the paper itself
-          flexGrow: 1, // Allow it to expand
-          display: 'flex',
-          flexDirection: 'column',
-        }}>
+        <Paper
+          elevation={1}
+          sx={{
+            minHeight: '400px',
+            borderRadius: 2,
+            bgcolor: 'background.paper', // Consistent with light theme paper
+            p: { xs: 2, sm: 3 }, // Add padding to the paper itself
+            flexGrow: 1, // Allow it to expand
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
           <DayView classes={currentClasses} dayName={currentDay.name} />
         </Paper>
 

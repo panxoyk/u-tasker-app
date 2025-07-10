@@ -3,8 +3,6 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import Divider from '@mui/material/Divider';
 import FormLabel from '@mui/material/FormLabel';
 import FormControl from '@mui/material/FormControl';
 import Link from '@mui/material/Link';
@@ -14,14 +12,13 @@ import Stack from '@mui/material/Stack';
 import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 import { Controller, useForm } from 'react-hook-form';
-import CircularProgress from '@mui/material/CircularProgress'; // Import CircularProgress
-import Alert from '@mui/material/Alert'; // Import Alert
+import CircularProgress from '@mui/material/CircularProgress';
+import Alert from '@mui/material/Alert';
 
-import AppTheme from '@/theme/AppTheme';
-import ColorModeSelect from '@/theme/ColorModeSelect';
-import { GoogleIcon } from '@/components/CustomIcons';
+import { signup } from '@/actions/auth';
 import { SignUpFormData } from '@/types/auth';
-import { signup } from '@/actions/auth'; // Assuming this is an async function
+import ColorModeSelect from '@/theme/ColorModeSelect';
+import { Divider } from '@mui/material';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',

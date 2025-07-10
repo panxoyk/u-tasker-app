@@ -1,15 +1,7 @@
 'use client';
 
 import { TaskData } from '@/types/task';
-import {
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  Chip,
-  IconButton,
-  Typography,
-} from '@mui/material';
+import { Button, Card, CardActions, CardContent, Chip, Typography } from '@mui/material';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import PlayCircleOutlineOutlinedIcon from '@mui/icons-material/PlayCircleOutlineOutlined';
 import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined';
