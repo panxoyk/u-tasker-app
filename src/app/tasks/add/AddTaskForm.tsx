@@ -1,4 +1,3 @@
-// addtaskform.tsx
 'use client';
 
 import { addTask } from '@/actions/task';
@@ -15,18 +14,16 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import Link from 'next/link';
 import { Controller, useForm } from 'react-hook-form';
 import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
-import { useCallback } from 'react'; // Import useCallback
 
 interface AddTaskFormProps {
   courses: CourseData[];
   coursesError?: string | null;
-  onTaskAdded: () => void;
-  showSnackbar: (message: string, severity: 'success' | 'error' | 'info') => void;
 }
 
-export default function AddTaskForm({ courses, coursesError, onTaskAdded, showSnackbar }: AddTaskFormProps) {
+export default function AddTaskForm({ courses, coursesError }: AddTaskFormProps) {
   const {
     control,
     handleSubmit,
@@ -35,23 +32,19 @@ export default function AddTaskForm({ courses, coursesError, onTaskAdded, showSn
   } = useForm<AddTaskFormData>({
     defaultValues: {
       title: '',
-      course_id: courses.length > 0 ? courses[0].id : undefined, // Set to undefined if no courses
+      course_id: courses[0]?.id,
       due_date: '',
       description: '',
     },
   });
 
-  const onSubmit = useCallback(async (formData: AddTaskFormData) => {
-    const { success, error } = await addTask(formData);
+  const onSubmit = async (formData: AddTaskFormData) => {
+    const { success } = await addTask(formData);
 
     if (success) {
-      reset(); // Reset the form fields
-      showSnackbar('Tarea añadida correctamente.', 'success'); // Show success message
-      onTaskAdded(); // Notify the parent component (HomePage)
-    } else {
-      showSnackbar(`Error al añadir la tarea: ${error || 'Unknown error'}`, 'error'); // Show error message
+      reset();
     }
-  }, [reset, showSnackbar, onTaskAdded]); // Add dependencies
+  };
 
   return (
     <Box
@@ -62,9 +55,8 @@ export default function AddTaskForm({ courses, coursesError, onTaskAdded, showSn
         flexDirection: 'column',
         gap: 2,
         flexGrow: 1,
-        // Remove overflowY and mt as HomePage will handle layout
-        // overflowY: 'auto',
-        // mt: { xs: 10, sm: 11 },
+        overflowY: 'auto',
+        mt: { xs: 10, sm: 11 },
       }}
     >
       <Controller
@@ -74,7 +66,7 @@ export default function AddTaskForm({ courses, coursesError, onTaskAdded, showSn
           required: 'A task is required',
           minLength: {
             value: 2,
-            message: 'Minimum 2 characters allowed',
+            message: 'Minimun 2 characters allowed',
           },
           maxLength: {
             value: 50,
@@ -94,8 +86,10 @@ export default function AddTaskForm({ courses, coursesError, onTaskAdded, showSn
               color="primary"
               error={!!errors.title}
               helperText={errors.title?.message}
-              inputProps={{ // Correct prop for input attributes
-                maxLength: 50,
+              slotProps={{
+                htmlInput: {
+                  maxLength: 50,
+                },
               }}
             />
           </FormControl>
@@ -151,8 +145,10 @@ export default function AddTaskForm({ courses, coursesError, onTaskAdded, showSn
               color="primary"
               error={!!errors.due_date}
               helperText={errors.due_date?.message}
-              InputLabelProps={{ // Correct prop for input label attributes
-                shrink: true,
+              slotProps={{
+                inputLabel: {
+                  shrink: true,
+                },
               }}
             />
           </FormControl>
@@ -173,8 +169,10 @@ export default function AddTaskForm({ courses, coursesError, onTaskAdded, showSn
               color="primary"
               error={!!errors.description}
               helperText={errors.description?.message}
-              inputProps={{ // Correct prop for input attributes
-                maxLength: 150,
+              slotProps={{
+                htmlInput: {
+                  maxLength: 150,
+                },
               }}
             />
           </FormControl>
@@ -190,20 +188,11 @@ export default function AddTaskForm({ courses, coursesError, onTaskAdded, showSn
         Add Task
       </Button>
       <Divider> Or </Divider>
-      {/* Remove the Link to /tasks as we are now within HomePage */}
-      {/* <Link href="/tasks"> */}
-        <Button
-          variant="outlined"
-          fullWidth
-          onClick={() => {
-            // Optionally, if you want a "Go to Tasks" button in the form
-            // when embedded, you can navigate the parent component here.
-            // For now, it will simply be removed as navigation is handled by the drawer.
-          }}
-        >
+      <Link href="/tasks">
+        <Button variant="outlined" fullWidth>
           View Tasks
         </Button>
-      {/* </Link> */}
+      </Link>
     </Box>
   );
 }
