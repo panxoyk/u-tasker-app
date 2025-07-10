@@ -48,6 +48,23 @@ export default function TasksCarousel({
         minHeight: '100vh',
       }}
     >
+      <Link href="/tasks/add">
+        <Button
+          variant="contained"
+          startIcon={<AddOutlinedIcon />}
+          sx={{
+            position: 'fixed',
+            bottom: 80,
+            right: 16,
+            borderRadius: '28px',
+            padding: '10px 24px',
+            zIndex: 1100,
+          }}
+        >
+          Add Task
+        </Button>
+      </Link>
+
       <Box
         sx={{
           flexGrow: 1,
