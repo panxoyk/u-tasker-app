@@ -6,16 +6,17 @@ import { convertDateTimeToTimestampz } from '@/utils/lib';
 import { createClient } from '@/utils/supabase/server';
 import { revalidatePath } from 'next/cache';
 
-export const getTasksPendiente = async (
+export const getTasksByStatus = async (
+  status: number = 1,
   course_id?: number,
 ): Promise<TaskArrayAPIResponse> => {
   try {
-    const supabase = createClient(); // Await is not needed here as createClient typically returns the client directly
+    const supabase = await createClient();
 
-    let query = (await supabase)
-      .from('task') // Your table name 'task'
-      .select('id, course_id, title, status, description, due_date, course(name)') // Join with 'course' table
-      .eq('status', 1);
+    let query = supabase
+      .from('task')
+      .select('id, course_id, title, status, description, due_date, course(name)')
+      .eq('status', status);
 
     if (course_id) {
       query = query.eq('course_id', course_id);
@@ -28,71 +29,71 @@ export const getTasksPendiente = async (
       return { success: false, error: error.message };
     }
 
-    const processedData = processFetchedTasks(data); // Process data here
-    return { success: true, data: processedData };
-
+    // @ts-ignore
+    return { success: true, data: tasks };
   } catch (e: any) {
     console.error(`Unexpected error getting tasks by status ${status}:`, e);
     return { success: false, error: e.message || 'An unexpected error occurred' };
   }
 };
 
-export const getTasksVencida = async (
-  course_id?: number,
-): Promise<{ success: boolean; data?: TaskData[]; error?: string }> => {
+export const addTask = async ({
+  course_id,
+  title,
+  due_date,
+  description,
+}: AddTaskFormData): Promise<TaskArrayAPIResponse> => {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
 
     const dueDateISO = convertDateTimeToTimestampz(due_date);
 
-    const { data: task, error } = await (await supabase)
+    const { data: task, error } = await supabase
       .from('task')
       .insert([
         {
-          course_id: formData.course_id,
-          title: formData.title,
-          ...(formData.description && { description: formData.description }),
-          ...(due_date && { due_date: due_date }),
-          status: 1, // Default status for new tasks
+          course_id: course_id,
+          title: title,
+          ...(description && { description: description }),
+          ...(dueDateISO && { due_date: dueDateISO }),
+          status: 1,
         },
       ])
-      .select('id, course_id, title, status, description, due_date, course(name)'); // Select the full TaskData shape if you want to return it
+      .select();
 
     if (error) {
       console.error('Error adding task:', error);
       return { success: false, error: error.message };
     }
 
-    const processedData = processFetchedTasks(task); // Process the returned task
-    revalidatePath('/tasks', 'layout'); // Consider revalidating a specific path or tag
-    return { success: true, data: processedData };
+    revalidatePath('/tasks', 'layout');
+    return { success: true, data: task };
   } catch (e: any) {
     console.error('Unexpected error adding task:', e);
     return { success: false, error: e.message || 'An unexpected error occurred' };
   }
 };
 
-export const updateStatusTask = async (
-  id: number,
-  status_id: number = 1, // Default to 1 (pending) if not provided
-): Promise<{ success: boolean; data?: TaskData[]; error?: string }> => {
+export const updateTaskStatus = async ({
+  id,
+  status = 1,
+}: UpdateTaskStatusFormData): Promise<TaskArrayAPIResponse> => {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
 
-    const { data: task, error } = await (await supabase)
+    const { data: task, error } = await supabase
       .from('task')
       .update({ status: status })
       .eq('id', id)
-      .select('id, course_id, title, status, description, due_date, course(name)'); // Select the full TaskData shape
+      .select();
 
     if (error) {
       console.error('Error updating task status:', error);
       return { success: false, error: error.message };
     }
 
-    const processedData = processFetchedTasks(task); // Process the returned task
     revalidatePath('/tasks', 'layout');
-    return { success: true, data: processedData };
+    return { success: true, data: task };
   } catch (e: any) {
     console.error('Unexpected error updating task status:', e);
     return { success: false, error: e.message || 'An unexpected error occurred' };
@@ -101,9 +102,9 @@ export const updateStatusTask = async (
 
 export const deleteTask = async (id: number): Promise<GenericAPIResponse> => {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
 
-    const { error } = await (await supabase).from('task').delete().eq('id', id);
+    const { error } = await supabase.from('task').delete().eq('id', id);
 
     if (error) {
       console.error('Error deleting task:', error);
