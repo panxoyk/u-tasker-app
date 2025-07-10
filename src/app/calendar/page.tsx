@@ -4,8 +4,6 @@ import {
   Container,
   Box,
   Typography,
-  AppBar,
-  Toolbar,
   Button,
   Paper,
   Stack,
@@ -143,12 +141,11 @@ export default async function HomePage() {
   };
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: '#0a0a0a', display: 'flex', flexDirection: 'column' }}>
-      {/* Header */}
+    <Box sx={{ minHeight: '100vh', bgcolor: '#f0f2f5', display: 'flex', flexDirection: 'column' }}>
       <Navbar />
-      <AppBar
-        position="static"
-        elevation={0}
+
+      <Container
+        maxWidth="md"
         sx={{
           bgcolor: '#111111',
           borderBottom: 1,
@@ -251,17 +248,17 @@ export default async function HomePage() {
                 p: { xs: 3, sm: 4 },
                 textAlign: 'center',
                 maxWidth: 400,
-                bgcolor: '#111111',
+                bgcolor: '#ffffff',
                 borderRadius: 2,
                 border: 1,
-                borderColor: '#333333',
+                borderColor: '#e0e0e0',
               }}
             >
-              <ErrorOutlineIcon sx={{ fontSize: 40, color: '#666666', mb: 2 }} />
-              <Typography variant="h6" gutterBottom sx={{ fontWeight: 500, color: '#ffffff' }}>
+              <ErrorOutlineIcon sx={{ fontSize: 40, color: '#999999', mb: 2 }} />
+              <Typography variant="h6" gutterBottom sx={{ fontWeight: 500, color: '#333333' }}>
                 Sin evaluaciones
               </Typography>
-              <Typography variant="body2" sx={{ color: '#888888', lineHeight: 1.6 }}>
+              <Typography variant="body2" sx={{ color: '#666666', lineHeight: 1.6 }}>
                 {displayError}
               </Typography>
             </Paper>
@@ -283,9 +280,9 @@ export default async function HomePage() {
                   size="small"
                   sx={{
                     fontSize: { xs: '0.75rem', sm: '0.8rem' },
-                    color: '#ffffff',
-                    borderColor: '#333333',
-                    bgcolor: '#1a1a1a',
+                    color: '#666666',
+                    borderColor: '#cccccc',
+                    bgcolor: '#f8f8f8',
                   }}
                 />
                 <Chip
@@ -294,9 +291,9 @@ export default async function HomePage() {
                   size="small"
                   sx={{
                     fontSize: { xs: '0.75rem', sm: '0.8rem' },
-                    color: '#ffffff',
-                    borderColor: '#333333',
-                    bgcolor: '#1a1a1a',
+                    color: '#666666',
+                    borderColor: '#cccccc',
+                    bgcolor: '#f8f8f8',
                   }}
                 />
                 {sortedEvaluations.filter((e) => isUpcoming(e.start_date)).length > 0 && (
@@ -320,17 +317,17 @@ export default async function HomePage() {
                 sx={{
                   p: { xs: 4, sm: 6 },
                   textAlign: 'center',
-                  bgcolor: '#111111',
+                  bgcolor: '#ffffff',
                   borderRadius: 2,
                   border: 1,
-                  borderColor: '#333333',
+                  borderColor: '#e0e0e0',
                 }}
               >
-                <CalendarTodayIcon sx={{ fontSize: 48, color: '#444444', mb: 2 }} />
-                <Typography variant="h6" sx={{ color: '#ffffff', mb: 1, fontWeight: 500 }}>
+                <CalendarTodayIcon sx={{ fontSize: 48, color: '#999999', mb: 2 }} />
+                <Typography variant="h6" sx={{ color: '#333333', mb: 1, fontWeight: 500 }}>
                   Sin evaluaciones
                 </Typography>
-                <Typography variant="body2" sx={{ color: '#888888' }}>
+                <Typography variant="body2" sx={{ color: '#666666' }}>
                   Añade tu primera evaluación para comenzar
                 </Typography>
               </Paper>
@@ -343,8 +340,8 @@ export default async function HomePage() {
                     sx={{
                       borderRadius: 2,
                       border: 1,
-                      borderColor: '#333333',
-                      bgcolor: '#111111',
+                      borderColor: '#e0e0e0',
+                      bgcolor: '#ffffff',
                       '&:hover': {
                         borderColor: '#2563eb',
                         boxShadow: '0 4px 20px rgba(37, 99, 235, 0.1)',
@@ -368,7 +365,7 @@ export default async function HomePage() {
                               variant="h6"
                               sx={{
                                 fontWeight: 600,
-                                color: '#ffffff',
+                                color: '#333333',
                                 fontSize: { xs: '1.1rem', sm: '1.25rem' },
                                 mb: 0.5,
                               }}
@@ -380,7 +377,7 @@ export default async function HomePage() {
                               <Typography
                                 variant="body2"
                                 sx={{
-                                  color: '#cccccc',
+                                  color: '#666666',
                                   fontSize: { xs: '0.85rem', sm: '0.9rem' },
                                 }}
                               >
@@ -426,7 +423,7 @@ export default async function HomePage() {
                           </Stack>
                         </Box>
 
-                        <Divider sx={{ borderColor: '#333333' }} />
+                        <Divider sx={{ borderColor: '#e0e0e0' }} />
 
                         {/* Date and Time Info */}
                         <Stack spacing={2}>
@@ -437,7 +434,7 @@ export default async function HomePage() {
                                 variant="body1"
                                 sx={{
                                   fontWeight: 500,
-                                  color: '#ffffff',
+                                  color: '#333333',
                                   fontSize: { xs: '0.9rem', sm: '1rem' },
                                 }}
                               >
@@ -446,7 +443,7 @@ export default async function HomePage() {
                               <Typography
                                 variant="body2"
                                 sx={{
-                                  color: '#888888',
+                                  color: '#666666',
                                   fontSize: { xs: '0.8rem', sm: '0.85rem' },
                                 }}
                               >
@@ -461,7 +458,7 @@ export default async function HomePage() {
                               <Typography
                                 variant="body2"
                                 sx={{
-                                  color: '#cccccc',
+                                  color: '#666666',
                                   fontSize: { xs: '0.85rem', sm: '0.9rem' },
                                 }}
                               >
@@ -482,6 +479,35 @@ export default async function HomePage() {
           </Stack>
         )}
       </Container>
+
+      {/* Floating Action Button for Add Evaluation - Now stuck to the very bottom */}
+      {courses && courses.length > 0 && !coursesError && (
+        <Link href="/calendar/add" passHref>
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            sx={{
+              position: 'fixed',
+              bottom: 16, // Changed from 80 to 16 to be closer to the bottom edge
+              right: 16,
+              borderRadius: '28px',
+              padding: '10px 24px',
+              zIndex: 1100,
+              textTransform: 'none',
+              fontWeight: 500,
+              bgcolor: '#2563eb',
+              color: '#ffffff',
+              boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)',
+              '&:hover': {
+                bgcolor: '#1d4ed8',
+                boxShadow: '0 6px 16px rgba(37, 99, 235, 0.4)',
+              },
+            }}
+          >
+            Añadir Evaluación
+          </Button>
+        </Link>
+      )}
     </Box>
   );
 }
