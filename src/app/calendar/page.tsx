@@ -143,7 +143,6 @@ export default async function HomePage() {
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: '#f0f2f5', display: 'flex', flexDirection: 'column' }}>
       <Navbar />
-
       <Container
         maxWidth="md"
         sx={{
@@ -175,7 +174,6 @@ export default async function HomePage() {
             Gestiona tus evaluaciones académicas
           </Typography>
         </Box>
-
         {displayError ? (
           <Box
             sx={{
@@ -236,7 +234,7 @@ export default async function HomePage() {
                     fontSize: { xs: '0.75rem', sm: '0.8rem' },
                     color: '#666666',
                     borderColor: '#cccccc',
-                    bgcolor: '#f8f8f8',
+                    bgcolor: '#f8f8f8'
                   }}
                 />
                 {sortedEvaluations.filter((e) => isUpcoming(e.start_date)).length > 0 && (

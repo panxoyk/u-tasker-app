@@ -14,7 +14,10 @@ export const updateFullName = async ({
   last_name,
 }: UpdateFullNameFormData): Promise<ProfileAPIResponse> => {
   try {
-    const supabase = await createClient();
+    // Check if a user is logged in
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
     // 1. Obtener el usuario actual
     const { data: { user }, error: userError } = await supabase.auth.getUser();
@@ -32,12 +35,9 @@ export const updateFullName = async ({
       .update({
         name: name,
         last_name: last_name,
-        name: name,
-        last_name: last_name,
       })
       .eq('id', user.id) // <-- ¡CRUCIAL! Asegura que solo se actualiza el perfil del usuario logueado
       .select()
-      .single();
 
     if (error) {
       console.error('Error actualizando el nombre completo:', error);
