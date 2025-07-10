@@ -105,6 +105,7 @@ export default function AddClassForm({ courses, coursesError }: AddClassFormProp
         gap: 2,
         flexGrow: 1,
         overflowY: 'auto',
+        mt: 4,
       }}
     >
       <Controller

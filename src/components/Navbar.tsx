@@ -71,7 +71,7 @@ export default function Navbar() {
         <Box sx={{ display: "flex", gap: 2 }}>
           {navigationItems.map((item) => (
             <Tooltip title={item.label} key={item.path}>
-              <Link href={item.path} passHref legacyBehavior>
+              <Link href={item.path} passHref>
                 <IconButton
                   color="inherit"
                   aria-label={item.label}

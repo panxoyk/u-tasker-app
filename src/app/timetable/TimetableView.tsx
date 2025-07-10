@@ -53,8 +53,6 @@ export default function TimetableView({ classesData }: TimetableViewProps) {
 
   return (
     <Box sx={{ width: '100%', maxWidth: '100vw' }}>
-      <WeekStats classesData={classesData} />
-
       <DayHeader
         currentDay={currentDay}
         classes={currentClasses}

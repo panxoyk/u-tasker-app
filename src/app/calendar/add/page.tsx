@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import SchoolIcon from '@mui/icons-material/School';
+import Navbar from '@/components/Navbar';
 
 export default async function AddEvaluationPage() {
   const { data: courses, error: coursesError } = await getAllCoursesFromActivePeriod();
@@ -94,7 +95,8 @@ export default async function AddEvaluationPage() {
   }
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: 4 }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
+      <Navbar />
       <Container maxWidth="sm">
         <Stack spacing={4}>
           <Box sx={{ textAlign: 'center', pt: 2 }}>

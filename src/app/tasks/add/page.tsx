@@ -1,12 +1,14 @@
 import { getAllCoursesFromActivePeriod } from '@/actions/course';
 import { AppBar, Box, Container, Toolbar, Typography } from '@mui/material';
 import AddTaskForm from './AddTaskForm';
+import Navbar from '@/components/Navbar';
 
 export default async function AddTaskPage() {
   const { data: courses, error } = await getAllCoursesFromActivePeriod();
 
   return (
     <div>
+      <Navbar />
       <Container maxWidth="sm">
         <Box
           sx={{
