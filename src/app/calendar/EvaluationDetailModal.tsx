@@ -17,9 +17,9 @@ import {
 } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'; // <-- ¡Revisar esta importación!
-import EditOutlinedIcon from '@mui/icons-material/EditOutlined'; // <-- ¡Revisar esta importación!
-import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined'; // <-- ¡Revisar esta importación!
+import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 
 interface EvaluationDetailModalProps {
   evaluation: EvaluationData;

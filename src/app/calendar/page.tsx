@@ -194,32 +194,34 @@ export default async function HomePage() {
               </Typography>
             </Box>
           </Stack>
-          {courses && courses.length > 0 && !coursesError && (
-            <Button
-              component={Link}
-              href="/calendar/add"
-              variant="contained"
-              startIcon={<AddIcon />}
-              fullWidth={{ xs: true, sm: false }}
-              sx={{
-                borderRadius: 2,
-                textTransform: 'none',
-                fontWeight: 500,
-                px: { xs: 2, sm: 3 },
-                py: { xs: 1.2, sm: 1 },
-                fontSize: { xs: '0.875rem', sm: '0.9rem' },
-                bgcolor: '#2563eb',
-                color: '#ffffff',
-                boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)',
-                '&:hover': {
-                  bgcolor: '#1d4ed8',
-                  boxShadow: '0 6px 16px rgba(37, 99, 235, 0.4)',
-                },
-              }}
-            >
-              Añadir
-            </Button>
-          )}
+          <Box sx={{ width: { xs: '100%', sm: 'auto' } }}>            
+            {courses && courses.length > 0 && !coursesError && (
+              <Button
+                component={Link}
+                href="/calendar/add"
+                variant="contained"
+                startIcon={<AddIcon />}
+                fullWidth
+                sx={{
+                  borderRadius: 2,
+                  textTransform: 'none',
+                  fontWeight: 500,
+                  px: { xs: 2, sm: 3 },
+                  py: { xs: 1.2, sm: 1 },
+                  fontSize: { xs: '0.875rem', sm: '0.9rem' },
+                  bgcolor: '#2563eb',
+                  color: '#ffffff',
+                  boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)',
+                  '&:hover': {
+                    bgcolor: '#1d4ed8',
+                    boxShadow: '0 6px 16px rgba(37, 99, 235, 0.4)',
+                  },
+                }}
+              >
+                Añadir
+              </Button>
+            )}
+          </Box>
         </Toolbar>
       </AppBar>
 

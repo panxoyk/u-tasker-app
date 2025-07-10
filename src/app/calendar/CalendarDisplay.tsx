@@ -1,9 +1,9 @@
-'use client'; // ¡IMPORTANTE! Debe ser la primera línea
+'use client';
 
 import { useState } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import timeGridPlugin from '@fullcalendar/timegrid'; // Necesario para timeGridWeek/Day
+import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { EvaluationData } from '@/types/evaluation';
 import { CourseData } from '@/types/course';
