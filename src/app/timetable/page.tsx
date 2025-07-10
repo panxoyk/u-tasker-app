@@ -1,6 +1,7 @@
 import { getClassesByDayOfTheWeek } from '@/actions/class';
 import { Container } from '@mui/material';
 import TimetableView from './TimetableView';
+import Navbar from '@/components/Navbar';
 
 export default async function TimetablePage() {
   const daysOfWeek = [1, 2, 3, 4, 5, 6, 7];
@@ -16,8 +17,11 @@ export default async function TimetablePage() {
   });
 
   return (
-    <Container maxWidth="sm" sx={{ py: 2 }}>
-      <TimetableView classesData={classesData} />
-    </Container>
+    <>
+      <Navbar />
+      <Container maxWidth="sm" sx={{ py: 2 }}>
+        <TimetableView classesData={classesData} />
+      </Container>
+    </>
   );
 }

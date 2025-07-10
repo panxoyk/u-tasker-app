@@ -23,6 +23,7 @@ import EventIcon from '@mui/icons-material/Event';
 import CircleIcon from '@mui/icons-material/Circle';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import type { EvaluationData } from '@/types/evaluation';
+import Navbar from '@/components/Navbar';
 
 export default async function HomePage() {
   const { data: courses, error: coursesError } = await getAllCoursesFromActivePeriod();
@@ -144,6 +145,7 @@ export default async function HomePage() {
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: '#0a0a0a', display: 'flex', flexDirection: 'column' }}>
       {/* Header */}
+      <Navbar />
       <AppBar
         position="static"
         elevation={0}
