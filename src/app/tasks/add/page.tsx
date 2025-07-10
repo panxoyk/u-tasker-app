@@ -1,3 +1,4 @@
+// app/tareas/add/page.jsx (o donde sea que esté tu AddTaskPage)
 import { getAllCoursesFromActivePeriod } from '@/actions/course';
 import { AppBar, Box, Container, Toolbar, Typography } from '@mui/material';
 import AddTaskForm from './AddTaskForm';
@@ -8,7 +9,8 @@ export default async function AddTaskPage() {
 
   return (
     <div>
-      <Navbar />
+      {/* Pasamos la prop activePath para que la Navbar muestre la sección 'Tareas' */}
+      <Navbar activePath="/tasks" />
       <Container maxWidth="sm">
         <Box
           sx={{
@@ -17,13 +19,6 @@ export default async function AddTaskPage() {
             minHeight: '100vh',
           }}
         >
-          <AppBar position="fixed" color="primary" sx={{ top: 0, bottom: 'auto' }}>
-            <Toolbar>
-              <Typography variant="h3" component="div" sx={{ flexGrow: 1 }}>
-                Tasks
-              </Typography>
-            </Toolbar>
-          </AppBar>
           <AddTaskForm courses={courses || []} coursesError={error} />
         </Box>
       </Container>

@@ -1,10 +1,16 @@
+// components/Navbar.tsx
 "use client";
 
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
-import Link from "next/link"; // Import Link
-import { AppBar, Toolbar, Typography, Box, IconButton, Tooltip } from "@mui/material"; // Import Tooltip for better UX
+import Link from "next/link";
+import { AppBar, Toolbar, Typography, Box, IconButton, Tooltip } from "@mui/material";
 import { CalendarMonth, Schedule, Assignment, AccountCircle, Home } from "@mui/icons-material";
+
+// Define la interfaz para las props de Navbar
+interface NavbarProps {
+  activePath?: string; // Ahora activePath puede ser un string o undefined
+}
 
 const navigationItems = [
   {
@@ -39,15 +45,19 @@ const navigationItems = [
   },
 ];
 
-export default function Navbar() {
+// Asigna la interfaz a las props del componente
+export default function Navbar({ activePath }: NavbarProps) {
   const pathname = usePathname();
+  // Usamos el 'activePath' si se provee, de lo contrario, usamos el 'pathname' real
+  const currentPathForNavbar = activePath || pathname;
+
   const [currentSection, setCurrentSection] = useState(navigationItems[0]);
 
-  // Detect current section based on pathname
+  // Detect current section based on currentPathForNavbar
   useEffect(() => {
-    const current = navigationItems.find((item) => item.path === pathname) || navigationItems[0];
+    const current = navigationItems.find((item) => item.path === currentPathForNavbar) || navigationItems[0];
     setCurrentSection(current);
-  }, [pathname]);
+  }, [currentPathForNavbar]); // Dependencia del useEffect
 
   return (
     <AppBar
@@ -71,20 +81,21 @@ export default function Navbar() {
         <Box sx={{ display: "flex", gap: 2 }}>
           {navigationItems.map((item) => (
             <Tooltip title={item.label} key={item.path}>
-              <Link href={item.path} passHref>
-                <IconButton
-                  color="inherit"
-                  aria-label={item.label}
-                  sx={{
-                    opacity: pathname === item.path ? 1 : 0.7,
-                    "&:hover": {
-                      opacity: 1,
-                    },
-                  }}
-                >
-                  {item.icon}
-                </IconButton>
-              </Link>
+              <IconButton
+                component={Link}
+                href={item.path}
+                color="inherit"
+                aria-label={item.label}
+                sx={{
+                  // Comparamos con el 'currentPathForNavbar' para el resaltado
+                  opacity: currentPathForNavbar === item.path ? 1 : 0.7,
+                  "&:hover": {
+                    opacity: 1,
+                  },
+                }}
+              >
+                {item.icon}
+              </IconButton>
             </Tooltip>
           ))}
         </Box>
