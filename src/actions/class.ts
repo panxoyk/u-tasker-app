@@ -89,7 +89,7 @@ export const updateClassTime = async ({
     const supabase = await createClient();
 
     const { data: clase, error } = await supabase
-      .from('task')
+      .from('class')
       .update({
         ...(start_time && { start_time: convertTimeToTimez(start_time) }),
         ...(end_time && { end_time: convertTimeToTimez(end_time) }),
@@ -118,7 +118,7 @@ export const updateClassClassroom = async ({
     const supabase = await createClient();
 
     const { data: clase, error } = await supabase
-      .from('task')
+      .from('class')
       .update({ classroom: classroom })
       .eq('id', id)
       .select();

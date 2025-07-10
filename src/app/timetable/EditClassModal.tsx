@@ -114,9 +114,9 @@ export default function EditClassModal({ open, onClose, classData }: EditClassMo
           </Typography>
           <Typography variant="body2" color="text.secondary">
             {classData.type === 1
-              ? '📚 Teoría'
+              ? '📚 Cátedra'
               : classData.type === 2
-                ? '💻 Práctica'
+                ? '💻 Ayudantía'
                 : '🔬 Laboratorio'}
           </Typography>
         </Box>
@@ -148,7 +148,11 @@ export default function EditClassModal({ open, onClose, classData }: EditClassMo
               type="time"
               value={formatTime(timeForm.start_time)}
               onChange={(e) => setTimeForm({ ...timeForm, start_time: e.target.value + ':00' })}
-              InputLabelProps={{ shrink: true }}
+              slotProps={{
+                inputLabel: {
+                  shrink: true,
+                },
+              }}
               size="small"
               fullWidth
             />
@@ -157,7 +161,11 @@ export default function EditClassModal({ open, onClose, classData }: EditClassMo
               type="time"
               value={formatTime(timeForm.end_time)}
               onChange={(e) => setTimeForm({ ...timeForm, end_time: e.target.value + ':00' })}
-              InputLabelProps={{ shrink: true }}
+              slotProps={{
+                inputLabel: {
+                  shrink: true,
+                },
+              }}
               size="small"
               fullWidth
             />
