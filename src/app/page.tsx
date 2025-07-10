@@ -1,11 +1,5 @@
-// app/page.tsx
-// NO 'use client' aquí, este es un Server Component por defecto
-
 import {
-  getTasksEnProceso,
-  getTasksEntregada,
-  getTasksPendiente,
-  getTasksVencida,
+  getTasksbyStatus from,
 } from '@/actions/task'; // Asume que tus Server Actions están en esta ruta
 import HomePage from './HomePage'; // Asegúrate de que la ruta sea correcta
 

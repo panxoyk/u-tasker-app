@@ -173,8 +173,6 @@ interface HomePageProps {
 
 export default function HomePage({
   initialTasksPendiente,
-  initialTasksEnProceso,
-  initialTasksEntregada,
   initialTasksVencida,
 }: HomePageProps) {
   const theme = useTheme()
@@ -184,8 +182,8 @@ export default function HomePage({
 
   // Estados de tareas
   const [tasksPendiente, setTasksPendiente] = useState<TaskData[]>(initialTasksPendiente)
-  const [tasksEnProceso, setTasksEnProceso] = useState<TaskData[]>(initialTasksEnProceso)
-  const [tasksEntregada, setTasksEntregada] = useState<TaskData[]>(initialTasksEntregada)
+  const [tasksEnProceso, setTasksEnProceso] = useState<TaskData[]>([])
+  const [tasksEntregada, setTasksEntregada] = useState<TaskData[]>([])
   const [tasksVencida, setTasksVencida] = useState<TaskData[]>(initialTasksVencida)
 
   const [loadingTasks, setLoadingTasks] = useState(false)
