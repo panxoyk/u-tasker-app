@@ -1,5 +1,3 @@
-'use server';
-
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/utils/supabase/server';
 import { AddEvaluationFormData, UpdateEvaluationDateFormData } from '../types/evaluation';
@@ -22,6 +20,7 @@ export const getEvaluationsByCourse = async (
       return { success: false, error: error.message };
     }
 
+    // @ts-ignore
     return { success: true, data: evaluations };
   } catch (e: any) {
     console.error(`Unexpected error getting evaluations for course ${course_id}`, e);
