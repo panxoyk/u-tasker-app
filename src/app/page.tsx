@@ -2,9 +2,16 @@ import {
   getTasksByStatus }
   from '@/actions/task'; 
 import HomePage from './HomePage'; // Asegúrate de que la ruta sea correcta
+import { createClient } from '@/utils/supabase/server';
+
 
 export default async function Page() {
   // Llama a las Server Actions directamente
+    const supabase = await createClient();
+  
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
   const { data: tasksPendiente = [], error: errorPendiente } = await getTasksByStatus(1);
   const { data: tasksEnProceso = [], error: errorEnProceso } = await getTasksByStatus(2);
   const { data: tasksEntregada = [], error: errorEntregada } = await getTasksByStatus(3);
@@ -33,6 +40,7 @@ export default async function Page() {
       initialTasksEnProceso={tasksEnProceso}
       initialTasksEntregada={tasksEntregada}
       initialTasksVencida={tasksVencida}
+      user={user} 
     />
   );
 }

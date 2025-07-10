@@ -49,6 +49,8 @@ import {
 import TaskCarousel from "./tasks/TaskCarousel"
 import type { TaskData } from "@/types/task"
 import AccountForm from "./account/AccountForm"
+import AccountPage from "./account/page"
+import { User } from "@supabase/supabase-js"
 
 // Componentes de contenido mejorados
 const HomePageContent = () => {
@@ -129,11 +131,13 @@ interface HomePageProps {
   initialTasksEnProceso: TaskData[]
   initialTasksEntregada: TaskData[]
   initialTasksVencida: TaskData[]
+  user: User | null
 }
 
 export default function HomePage({
   initialTasksPendiente,
   initialTasksVencida,
+  user, // Asegúrate de que el tipo de user sea correcto
 }: HomePageProps) {
   const theme = useTheme()
   const isDesktop = useMediaQuery(theme.breakpoints.up("md"))
