@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { signout } from "@/actions/auth"
 import { useCallback, useEffect, useState } from "react"

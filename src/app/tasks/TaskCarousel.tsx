@@ -48,24 +48,10 @@ export default function TasksCarousel({
         minHeight: '100vh',
       }}
     >
-      <AppBar position="fixed" color="primary" sx={{ top: 0, bottom: 'auto' }}>
-        <Toolbar>
-          <Typography variant="h3" component="div" sx={{ flexGrow: 1 }}>
-            Tasks
-          </Typography>
-          <Link href="/tasks/add">
-            <Button variant="contained" startIcon={<AddOutlinedIcon />}>
-              Add Task
-            </Button>
-          </Link>
-        </Toolbar>
-      </AppBar>
       <Box
         sx={{
           flexGrow: 1,
           overflowY: 'auto',
-          mt: { xs: 7, sm: 8 },
-          mb: { xs: 7, sm: 8 },
         }}
       >
         {sections.map((section, index) => (
