@@ -136,6 +136,8 @@ interface HomePageProps {
 
 export default function HomePage({
   initialTasksPendiente,
+  initialTasksEnProceso,
+  initialTasksEntregada,
   initialTasksVencida,
   user, // Asegúrate de que el tipo de user sea correcto
 }: HomePageProps) {
@@ -146,8 +148,8 @@ export default function HomePage({
 
   // Estados de tareas
   const [tasksPendiente, setTasksPendiente] = useState<TaskData[]>(initialTasksPendiente)
-  const [tasksEnProceso, setTasksEnProceso] = useState<TaskData[]>([])
-  const [tasksEntregada, setTasksEntregada] = useState<TaskData[]>([])
+  const [tasksEnProceso, setTasksEnProceso] = useState<TaskData[]>(initialTasksEnProceso)
+  const [tasksEntregada, setTasksEntregada] = useState<TaskData[]>(initialTasksEntregada)
   const [tasksVencida, setTasksVencida] = useState<TaskData[]>(initialTasksVencida)
 
   const [loadingTasks, setLoadingTasks] = useState(false)
