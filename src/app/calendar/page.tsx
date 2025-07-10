@@ -1,5 +1,5 @@
-import { getEvaluationsByCourse } from "@/actions/evaluation"
-import { getAllCoursesFromActivePeriod } from "@/actions/course"
+import { getEvaluationsByCourse } from '@/actions/evaluation';
+import { getAllCoursesFromActivePeriod } from '@/actions/course';
 import {
   Container,
   Box,
@@ -13,152 +13,153 @@ import {
   Card,
   CardContent,
   Divider,
-} from "@mui/material"
-import Link from "next/link"
-import AddIcon from "@mui/icons-material/Add"
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday"
-import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline"
-import SchoolIcon from "@mui/icons-material/School"
-import EventIcon from "@mui/icons-material/Event"
-import CircleIcon from "@mui/icons-material/Circle"
-import AccessTimeIcon from "@mui/icons-material/AccessTime"
-import type { EvaluationData } from "@/types/evaluation"
+} from '@mui/material';
+import Link from 'next/link';
+import AddIcon from '@mui/icons-material/Add';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import SchoolIcon from '@mui/icons-material/School';
+import EventIcon from '@mui/icons-material/Event';
+import CircleIcon from '@mui/icons-material/Circle';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import type { EvaluationData } from '@/types/evaluation';
 
 export default async function HomePage() {
-  const { data: courses, error: coursesError } = await getAllCoursesFromActivePeriod()
-  let allEvaluations: EvaluationData[] = []
-  let displayError: string | null = null
+  const { data: courses, error: coursesError } = await getAllCoursesFromActivePeriod();
+  let allEvaluations: EvaluationData[] = [];
+  let displayError: string | null = null;
 
   if (coursesError) {
-    console.error("Error al obtener los cursos:", coursesError)
-    displayError = `Error al cargar los cursos: ${coursesError}.`
+    console.error('Error al obtener los cursos:', coursesError);
+    displayError = `Error al cargar los cursos: ${coursesError}.`;
   } else if (!courses || courses.length === 0) {
-    displayError = "No hay cursos activos disponibles para gestionar evaluaciones. Por favor, añade un curso primero."
+    displayError =
+      'No hay cursos activos disponibles para gestionar evaluaciones. Por favor, añade un curso primero.';
   } else {
-    const evaluationPromises = courses.map((course) => getEvaluationsByCourse(course.id))
+    const evaluationPromises = courses.map((course) => getEvaluationsByCourse(course.id));
     try {
-      const results = await Promise.all(evaluationPromises)
+      const results = await Promise.all(evaluationPromises);
       allEvaluations = results.flatMap((result) => {
         if (result.success && result.data) {
-          return result.data
+          return result.data;
         } else {
-          console.error(`Error al obtener evaluaciones para un curso: ${result.error}`)
-          return []
+          console.error(`Error al obtener evaluaciones para un curso: ${result.error}`);
+          return [];
         }
-      })
+      });
       if (allEvaluations.length === 0 && !displayError) {
-        displayError = "No hay evaluaciones programadas para tus cursos activos."
+        displayError = 'No hay evaluaciones programadas para tus cursos activos.';
       }
     } catch (e: any) {
-      console.error("Error inesperado al procesar las evaluaciones:", e)
-      displayError = `Ocurrió un error inesperado al cargar las evaluaciones: ${e.message || "Error desconocido"}.`
+      console.error('Error inesperado al procesar las evaluaciones:', e);
+      displayError = `Ocurrió un error inesperado al cargar las evaluaciones: ${e.message || 'Error desconocido'}.`;
     }
   }
 
   // Sort evaluations by start_date
   const sortedEvaluations = allEvaluations.sort((a, b) => {
-    const dateA = new Date(a.start_date || "")
-    const dateB = new Date(b.start_date || "")
-    return dateA.getTime() - dateB.getTime()
-  })
+    const dateA = new Date(a.start_date || '');
+    const dateB = new Date(b.start_date || '');
+    return dateA.getTime() - dateB.getTime();
+  });
 
   const formatDate = (dateString?: string) => {
-    if (!dateString) return "Sin fecha"
-    const date = new Date(dateString)
-    const today = new Date()
-    const tomorrow = new Date(today)
-    tomorrow.setDate(tomorrow.getDate() + 1)
+    if (!dateString) return 'Sin fecha';
+    const date = new Date(dateString);
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
 
     if (date.toDateString() === today.toDateString()) {
-      return "Hoy"
+      return 'Hoy';
     } else if (date.toDateString() === tomorrow.toDateString()) {
-      return "Mañana"
+      return 'Mañana';
     } else {
-      return date.toLocaleDateString("es-ES", {
-        weekday: "short",
-        month: "short",
-        day: "numeric",
-      })
+      return date.toLocaleDateString('es-ES', {
+        weekday: 'short',
+        month: 'short',
+        day: 'numeric',
+      });
     }
-  }
+  };
 
   const formatFullDate = (dateString?: string) => {
-    if (!dateString) return "Fecha no especificada"
-    const date = new Date(dateString)
-    return date.toLocaleDateString("es-ES", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    })
-  }
+    if (!dateString) return 'Fecha no especificada';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('es-ES', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  };
 
   const formatTime = (dateString?: string) => {
-    if (!dateString) return null
-    const date = new Date(dateString)
-    return date.toLocaleTimeString("es-ES", {
-      hour: "2-digit",
-      minute: "2-digit",
-    })
-  }
+    if (!dateString) return null;
+    const date = new Date(dateString);
+    return date.toLocaleTimeString('es-ES', {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  };
 
   const formatDateRange = (startDate?: string, endDate?: string) => {
-    if (!startDate && !endDate) return "Sin fechas"
-    if (startDate && !endDate) return `Desde ${formatFullDate(startDate)}`
-    if (!startDate && endDate) return `Hasta ${formatFullDate(endDate)}`
+    if (!startDate && !endDate) return 'Sin fechas';
+    if (startDate && !endDate) return `Desde ${formatFullDate(startDate)}`;
+    if (!startDate && endDate) return `Hasta ${formatFullDate(endDate)}`;
 
-    const start = new Date(startDate!)
-    const end = new Date(endDate!)
+    const start = new Date(startDate!);
+    const end = new Date(endDate!);
 
     if (start.toDateString() === end.toDateString()) {
-      return `${formatFullDate(startDate)} (${formatTime(startDate)} - ${formatTime(endDate)})`
+      return `${formatFullDate(startDate)} (${formatTime(startDate)} - ${formatTime(endDate)})`;
     }
 
-    return `${formatFullDate(startDate)} - ${formatFullDate(endDate)}`
-  }
+    return `${formatFullDate(startDate)} - ${formatFullDate(endDate)}`;
+  };
 
   const isUpcoming = (startDate?: string) => {
-    if (!startDate) return false
-    const now = new Date()
-    const evalDate = new Date(startDate)
-    const timeDiff = evalDate.getTime() - now.getTime()
-    const hoursDiff = timeDiff / (1000 * 3600)
-    return hoursDiff <= 24 && hoursDiff > 0
-  }
+    if (!startDate) return false;
+    const now = new Date();
+    const evalDate = new Date(startDate);
+    const timeDiff = evalDate.getTime() - now.getTime();
+    const hoursDiff = timeDiff / (1000 * 3600);
+    return hoursDiff <= 24 && hoursDiff > 0;
+  };
 
   const isActive = (startDate?: string, endDate?: string) => {
-    const now = new Date()
-    const start = startDate ? new Date(startDate) : null
-    const end = endDate ? new Date(endDate) : null
+    const now = new Date();
+    const start = startDate ? new Date(startDate) : null;
+    const end = endDate ? new Date(endDate) : null;
 
     if (start && end) {
-      return now >= start && now <= end
+      return now >= start && now <= end;
     }
     if (start) {
-      return now >= start
+      return now >= start;
     }
-    return false
-  }
+    return false;
+  };
 
   return (
-    <Box sx={{ minHeight: "100vh", bgcolor: "#0a0a0a", display: "flex", flexDirection: "column" }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: '#0a0a0a', display: 'flex', flexDirection: 'column' }}>
       {/* Header */}
       <AppBar
         position="static"
         elevation={0}
         sx={{
-          bgcolor: "#111111",
+          bgcolor: '#111111',
           borderBottom: 1,
-          borderColor: "#333333",
+          borderColor: '#333333',
         }}
       >
         <Toolbar
           sx={{
             py: { xs: 1.5, sm: 2 },
             px: { xs: 2, sm: 3 },
-            flexDirection: { xs: "column", sm: "row" },
+            flexDirection: { xs: 'column', sm: 'row' },
             gap: { xs: 2, sm: 0 },
-            alignItems: { xs: "stretch", sm: "center" },
+            alignItems: { xs: 'stretch', sm: 'center' },
           }}
         >
           <Stack
@@ -167,17 +168,17 @@ export default async function HomePage() {
             spacing={{ xs: 1.5, sm: 2 }}
             sx={{
               flexGrow: 1,
-              justifyContent: { xs: "center", sm: "flex-start" },
+              justifyContent: { xs: 'center', sm: 'flex-start' },
             }}
           >
-            <Box sx={{ textAlign: { xs: "center", sm: "left" } }}>
+            <Box sx={{ textAlign: { xs: 'center', sm: 'left' } }}>
               <Typography
                 variant="h5"
                 component="h1"
                 sx={{
-                  color: "#ffffff",
+                  color: '#ffffff',
                   fontWeight: 600,
-                  fontSize: { xs: "1.25rem", sm: "1.5rem" },
+                  fontSize: { xs: '1.25rem', sm: '1.5rem' },
                 }}
               >
                 Evaluaciones
@@ -185,8 +186,8 @@ export default async function HomePage() {
               <Typography
                 variant="body2"
                 sx={{
-                  color: "#888888",
-                  fontSize: { xs: "0.8rem", sm: "0.875rem" },
+                  color: '#888888',
+                  fontSize: { xs: '0.8rem', sm: '0.875rem' },
                 }}
               >
                 Gestiona tus evaluaciones académicas
@@ -202,17 +203,17 @@ export default async function HomePage() {
               fullWidth={{ xs: true, sm: false }}
               sx={{
                 borderRadius: 2,
-                textTransform: "none",
+                textTransform: 'none',
                 fontWeight: 500,
                 px: { xs: 2, sm: 3 },
                 py: { xs: 1.2, sm: 1 },
-                fontSize: { xs: "0.875rem", sm: "0.9rem" },
-                bgcolor: "#2563eb",
-                color: "#ffffff",
-                boxShadow: "0 4px 12px rgba(37, 99, 235, 0.3)",
-                "&:hover": {
-                  bgcolor: "#1d4ed8",
-                  boxShadow: "0 6px 16px rgba(37, 99, 235, 0.4)",
+                fontSize: { xs: '0.875rem', sm: '0.9rem' },
+                bgcolor: '#2563eb',
+                color: '#ffffff',
+                boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)',
+                '&:hover': {
+                  bgcolor: '#1d4ed8',
+                  boxShadow: '0 6px 16px rgba(37, 99, 235, 0.4)',
                 },
               }}
             >
@@ -234,29 +235,29 @@ export default async function HomePage() {
         {displayError ? (
           <Box
             sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              minHeight: "60vh",
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              minHeight: '60vh',
             }}
           >
             <Paper
               elevation={0}
               sx={{
                 p: { xs: 3, sm: 4 },
-                textAlign: "center",
+                textAlign: 'center',
                 maxWidth: 400,
-                bgcolor: "#111111",
+                bgcolor: '#111111',
                 borderRadius: 2,
                 border: 1,
-                borderColor: "#333333",
+                borderColor: '#333333',
               }}
             >
-              <ErrorOutlineIcon sx={{ fontSize: 40, color: "#666666", mb: 2 }} />
-              <Typography variant="h6" gutterBottom sx={{ fontWeight: 500, color: "#ffffff" }}>
+              <ErrorOutlineIcon sx={{ fontSize: 40, color: '#666666', mb: 2 }} />
+              <Typography variant="h6" gutterBottom sx={{ fontWeight: 500, color: '#ffffff' }}>
                 Sin evaluaciones
               </Typography>
-              <Typography variant="body2" sx={{ color: "#888888", lineHeight: 1.6 }}>
+              <Typography variant="body2" sx={{ color: '#888888', lineHeight: 1.6 }}>
                 {displayError}
               </Typography>
             </Paper>
@@ -264,17 +265,23 @@ export default async function HomePage() {
         ) : (
           <Stack spacing={{ xs: 3, sm: 4 }}>
             {/* Summary */}
-            <Box sx={{ textAlign: "center" }}>
-              <Stack direction="row" spacing={2} justifyContent="center" flexWrap="wrap" sx={{ gap: 1 }}>
+            <Box sx={{ textAlign: 'center' }}>
+              <Stack
+                direction="row"
+                spacing={2}
+                justifyContent="center"
+                flexWrap="wrap"
+                sx={{ gap: 1 }}
+              >
                 <Chip
                   label={`${allEvaluations.length} evaluaciones`}
                   variant="outlined"
                   size="small"
                   sx={{
-                    fontSize: { xs: "0.75rem", sm: "0.8rem" },
-                    color: "#ffffff",
-                    borderColor: "#333333",
-                    bgcolor: "#1a1a1a",
+                    fontSize: { xs: '0.75rem', sm: '0.8rem' },
+                    color: '#ffffff',
+                    borderColor: '#333333',
+                    bgcolor: '#1a1a1a',
                   }}
                 />
                 <Chip
@@ -282,10 +289,10 @@ export default async function HomePage() {
                   variant="outlined"
                   size="small"
                   sx={{
-                    fontSize: { xs: "0.75rem", sm: "0.8rem" },
-                    color: "#ffffff",
-                    borderColor: "#333333",
-                    bgcolor: "#1a1a1a",
+                    fontSize: { xs: '0.75rem', sm: '0.8rem' },
+                    color: '#ffffff',
+                    borderColor: '#333333',
+                    bgcolor: '#1a1a1a',
                   }}
                 />
                 {sortedEvaluations.filter((e) => isUpcoming(e.start_date)).length > 0 && (
@@ -293,9 +300,9 @@ export default async function HomePage() {
                     label={`${sortedEvaluations.filter((e) => isUpcoming(e.start_date)).length} próximas`}
                     size="small"
                     sx={{
-                      bgcolor: "#2563eb",
-                      color: "#ffffff",
-                      fontSize: { xs: "0.75rem", sm: "0.8rem" },
+                      bgcolor: '#2563eb',
+                      color: '#ffffff',
+                      fontSize: { xs: '0.75rem', sm: '0.8rem' },
                     }}
                   />
                 )}
@@ -308,18 +315,18 @@ export default async function HomePage() {
                 elevation={0}
                 sx={{
                   p: { xs: 4, sm: 6 },
-                  textAlign: "center",
-                  bgcolor: "#111111",
+                  textAlign: 'center',
+                  bgcolor: '#111111',
                   borderRadius: 2,
                   border: 1,
-                  borderColor: "#333333",
+                  borderColor: '#333333',
                 }}
               >
-                <CalendarTodayIcon sx={{ fontSize: 48, color: "#444444", mb: 2 }} />
-                <Typography variant="h6" sx={{ color: "#ffffff", mb: 1, fontWeight: 500 }}>
+                <CalendarTodayIcon sx={{ fontSize: 48, color: '#444444', mb: 2 }} />
+                <Typography variant="h6" sx={{ color: '#ffffff', mb: 1, fontWeight: 500 }}>
                   Sin evaluaciones
                 </Typography>
-                <Typography variant="body2" sx={{ color: "#888888" }}>
+                <Typography variant="body2" sx={{ color: '#888888' }}>
                   Añade tu primera evaluación para comenzar
                 </Typography>
               </Paper>
@@ -332,40 +339,45 @@ export default async function HomePage() {
                     sx={{
                       borderRadius: 2,
                       border: 1,
-                      borderColor: "#333333",
-                      bgcolor: "#111111",
-                      "&:hover": {
-                        borderColor: "#2563eb",
-                        boxShadow: "0 4px 20px rgba(37, 99, 235, 0.1)",
+                      borderColor: '#333333',
+                      bgcolor: '#111111',
+                      '&:hover': {
+                        borderColor: '#2563eb',
+                        boxShadow: '0 4px 20px rgba(37, 99, 235, 0.1)',
                       },
-                      transition: "all 0.2s ease",
+                      transition: 'all 0.2s ease',
                     }}
                   >
                     <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
                       <Stack spacing={{ xs: 2, sm: 3 }}>
                         {/* Header */}
                         <Box
-                          sx={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 2 }}
+                          sx={{
+                            display: 'flex',
+                            alignItems: 'flex-start',
+                            justifyContent: 'space-between',
+                            gap: 2,
+                          }}
                         >
                           <Box sx={{ flex: 1 }}>
                             <Typography
                               variant="h6"
                               sx={{
                                 fontWeight: 600,
-                                color: "#ffffff",
-                                fontSize: { xs: "1.1rem", sm: "1.25rem" },
+                                color: '#ffffff',
+                                fontSize: { xs: '1.1rem', sm: '1.25rem' },
                                 mb: 0.5,
                               }}
                             >
                               {evaluation.title}
                             </Typography>
                             <Stack direction="row" alignItems="center" spacing={1}>
-                              <SchoolIcon sx={{ fontSize: 16, color: "#2563eb" }} />
+                              <SchoolIcon sx={{ fontSize: 16, color: '#2563eb' }} />
                               <Typography
                                 variant="body2"
                                 sx={{
-                                  color: "#cccccc",
-                                  fontSize: { xs: "0.85rem", sm: "0.9rem" },
+                                  color: '#cccccc',
+                                  fontSize: { xs: '0.85rem', sm: '0.9rem' },
                                 }}
                               >
                                 {evaluation.course.name}
@@ -376,16 +388,20 @@ export default async function HomePage() {
                           <Stack direction="row" spacing={1}>
                             {isActive(evaluation.start_date, evaluation.end_date) && (
                               <Chip
-                                icon={<CircleIcon sx={{ fontSize: "12px !important", color: "#10b981" }} />}
+                                icon={
+                                  <CircleIcon
+                                    sx={{ fontSize: '12px !important', color: '#10b981' }}
+                                  />
+                                }
                                 label="Activa"
                                 size="small"
                                 sx={{
-                                  bgcolor: "rgba(16, 185, 129, 0.1)",
-                                  color: "#10b981",
-                                  fontSize: "0.75rem",
+                                  bgcolor: 'rgba(16, 185, 129, 0.1)',
+                                  color: '#10b981',
+                                  fontSize: '0.75rem',
                                   height: 24,
                                   border: 1,
-                                  borderColor: "rgba(16, 185, 129, 0.3)",
+                                  borderColor: 'rgba(16, 185, 129, 0.3)',
                                 }}
                               />
                             )}
@@ -394,31 +410,31 @@ export default async function HomePage() {
                                 label="Próxima"
                                 size="small"
                                 sx={{
-                                  bgcolor: "rgba(37, 99, 235, 0.1)",
-                                  color: "#2563eb",
-                                  fontSize: "0.75rem",
+                                  bgcolor: 'rgba(37, 99, 235, 0.1)',
+                                  color: '#2563eb',
+                                  fontSize: '0.75rem',
                                   height: 24,
                                   border: 1,
-                                  borderColor: "rgba(37, 99, 235, 0.3)",
+                                  borderColor: 'rgba(37, 99, 235, 0.3)',
                                 }}
                               />
                             )}
                           </Stack>
                         </Box>
 
-                        <Divider sx={{ borderColor: "#333333" }} />
+                        <Divider sx={{ borderColor: '#333333' }} />
 
                         {/* Date and Time Info */}
                         <Stack spacing={2}>
-                          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                            <EventIcon sx={{ fontSize: 20, color: "#2563eb" }} />
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                            <EventIcon sx={{ fontSize: 20, color: '#2563eb' }} />
                             <Box>
                               <Typography
                                 variant="body1"
                                 sx={{
                                   fontWeight: 500,
-                                  color: "#ffffff",
-                                  fontSize: { xs: "0.9rem", sm: "1rem" },
+                                  color: '#ffffff',
+                                  fontSize: { xs: '0.9rem', sm: '1rem' },
                                 }}
                               >
                                 {formatDate(evaluation.start_date)}
@@ -426,8 +442,8 @@ export default async function HomePage() {
                               <Typography
                                 variant="body2"
                                 sx={{
-                                  color: "#888888",
-                                  fontSize: { xs: "0.8rem", sm: "0.85rem" },
+                                  color: '#888888',
+                                  fontSize: { xs: '0.8rem', sm: '0.85rem' },
                                 }}
                               >
                                 {formatDateRange(evaluation.start_date, evaluation.end_date)}
@@ -436,13 +452,13 @@ export default async function HomePage() {
                           </Box>
 
                           {formatTime(evaluation.start_date) && (
-                            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                              <AccessTimeIcon sx={{ fontSize: 20, color: "#2563eb" }} />
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                              <AccessTimeIcon sx={{ fontSize: 20, color: '#2563eb' }} />
                               <Typography
                                 variant="body2"
                                 sx={{
-                                  color: "#cccccc",
-                                  fontSize: { xs: "0.85rem", sm: "0.9rem" },
+                                  color: '#cccccc',
+                                  fontSize: { xs: '0.85rem', sm: '0.9rem' },
                                 }}
                               >
                                 {formatTime(evaluation.start_date)}
@@ -463,5 +479,5 @@ export default async function HomePage() {
         )}
       </Container>
     </Box>
-  )
+  );
 }

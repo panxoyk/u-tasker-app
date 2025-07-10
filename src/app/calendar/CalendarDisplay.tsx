@@ -25,7 +25,7 @@ export default function CalendarDisplay({ evaluations, courses }: CalendarDispla
     id: String(evalItem.id),
     title: `${evalItem.title} (${evalItem.course.name})`,
     start: evalItem.start_date, // FullCalendar espera formato ISO 8601 aquí
-    end: evalItem.end_date,     // FullCalendar espera formato ISO 8601 aquí
+    end: evalItem.end_date, // FullCalendar espera formato ISO 8601 aquí
     allDay: !evalItem.start_date && !evalItem.end_date, // Si no hay fechas/horas, es todo el día
     extendedProps: {
       courseId: evalItem.course_id,
@@ -36,7 +36,7 @@ export default function CalendarDisplay({ evaluations, courses }: CalendarDispla
   }));
 
   function getCourseColor(courseId: number, allCourses: CourseData[]): string {
-    const course = allCourses.find(c => c.id === courseId);
+    const course = allCourses.find((c) => c.id === courseId);
     if (course) {
       const colors = ['#3f51b5', '#f50057', '#00bcd4', '#ff9800', '#4caf50', '#9c27b0', '#e91e63'];
       return colors[course.id % colors.length];
