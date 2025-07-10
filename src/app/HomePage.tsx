@@ -48,6 +48,7 @@ import {
 } from "@mui/icons-material"
 import TaskCarousel from "./tasks/TaskCarousel"
 import type { TaskData } from "@/types/task"
+import AccountForm from "./account/AccountForm"
 
 // Componentes de contenido mejorados
 const HomePageContent = () => {
@@ -118,47 +119,6 @@ const HomePageContent = () => {
             </Card>
           </Grid>
         </Grid>
-      </Box>
-    </Fade>
-  )
-}
-
-const AccountPageContent = () => {
-  const theme = useTheme()
-
-  return (
-    <Fade in timeout={500}>
-      <Box>
-        <Card sx={{ mb: 3 }}>
-          <CardContent>
-            <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
-              <Avatar sx={{ width: 80, height: 80, mr: 3, bgcolor: theme.palette.primary.main }}>
-                <AccountCircleIcon sx={{ fontSize: 40 }} />
-              </Avatar>
-              <Box>
-                <Typography variant="h4" gutterBottom>
-                  Mi Perfil
-                </Typography>
-                <Typography variant="body1" color="text.secondary">
-                  Gestiona tu información personal y preferencias
-                </Typography>
-              </Box>
-            </Box>
-            <Divider sx={{ my: 2 }} />
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <Button variant="outlined" fullWidth startIcon={<SettingsIcon />}>
-                  Configuración
-                </Button>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Button variant="contained" fullWidth>
-                  Editar Perfil
-                </Button>
-              </Grid>
-            </Grid>
-          </CardContent>
-        </Card>
       </Box>
     </Fade>
   )
@@ -276,7 +236,7 @@ export default function HomePage({
         id: "account",
         text: "Cuenta",
         icon: <AccountCircleIcon />,
-        component: <AccountPageContent />,
+        component: <AccountForm user={user} />,
         badge: null,
       },
     ],
